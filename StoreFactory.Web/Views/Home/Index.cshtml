@@ -1,0 +1,33 @@
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="jumbotron">
+    <h1>StoreFactory Web Simulator</h1>
+    <p class="lead">Increasing Performance of the Textile Production Chain.</p>
+    <p><a asp-controller="Home" asp-action="About" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <h2>Simulator</h2>
+        <p>
+            Interactive lab to visualize material shrinkage parameters.
+        </p>
+        <p><a class="btn btn-default" href="#">Start Simulation &raquo;</a></p>
+    </div>
+    <div class="col-md-4">
+        <h2>Analysis</h2>
+        <p>
+            View the results of the Heat Setting Analysis (Chapter 5).
+        </p>
+        <p><a class="btn btn-default" href="#">View Charts &raquo;</a></p>
+    </div>
+    <div class="col-md-4">
+        <h2>Documentation</h2>
+        <p>
+            Read the Master Thesis abstract and methodology.
+        </p>
+        <p><a asp-controller="Home" asp-action="About" class="btn btn-default">Read Thesis &raquo;</a></p>
+    </div>
+</div>
