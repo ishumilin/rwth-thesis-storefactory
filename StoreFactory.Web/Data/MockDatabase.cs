@@ -18,6 +18,12 @@ namespace StoreFactory.Web.Data
             // Seed Materials
             Materials.Add(new Material { Id = 1, Name = "Polyester (PES)", Description = "Synthetic Fiber" });
             Materials.Add(new Material { Id = 2, Name = "Wool", Description = "Natural Fiber" });
+
+            // Seed Shrinkage Data - Polyester (Table 5.1)
+            // Series 1: PES Black, 40x40cm
+            ShrinkageParameters.Add(new ShrinkageData { ProductId = 1, MaterialId = 1, Temperature = 180, DwellTime = 5.5, LengthFactor = 0.99, WidthFactor = 0.99, SleeveFactor = 0.99 });
+            ShrinkageParameters.Add(new ShrinkageData { ProductId = 1, MaterialId = 1, Temperature = 190, DwellTime = 2.5, LengthFactor = 0.98, WidthFactor = 0.98, SleeveFactor = 0.98 });
+            ShrinkageParameters.Add(new ShrinkageData { ProductId = 1, MaterialId = 1, Temperature = 195, DwellTime = 1.0, LengthFactor = 0.97, WidthFactor = 0.97, SleeveFactor = 0.97 });
         }
     }
 }
