@@ -29,6 +29,11 @@ namespace StoreFactory.Web.Data
             // Series 2: Wool, Red/White/Black
             ShrinkageParameters.Add(new ShrinkageData { ProductId = 1, MaterialId = 2, Temperature = 30, DwellTime = 10, LengthFactor = 1.04, WidthFactor = 0.94, SleeveFactor = 0.96 });
             ShrinkageParameters.Add(new ShrinkageData { ProductId = 1, MaterialId = 2, Temperature = 30, DwellTime = 20, LengthFactor = 1.03, WidthFactor = 0.95, SleeveFactor = 0.95 });
+
+            // Seed Shrinkage Data - Color (Table 5.5)
+            // Color Specific Factors
+            ShrinkageParameters.Add(new ShrinkageData { ProductId = 1, MaterialId = 2, Temperature = 30, DwellTime = 10, LengthFactor = 0.96, WidthFactor = 0.96, SleeveFactor = 0.96 }); // Black
+            ShrinkageParameters.Add(new ShrinkageData { ProductId = 1, MaterialId = 2, Temperature = 30, DwellTime = 10, LengthFactor = 0.97, WidthFactor = 1.04, SleeveFactor = 0.94 }); // Pink
         }
     }
 }
