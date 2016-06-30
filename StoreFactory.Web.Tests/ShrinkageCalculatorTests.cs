@@ -34,5 +34,17 @@ namespace StoreFactory.Web.Tests
             // Assert
             Assert.Equal(1.0, result.LengthFactor);
         }
+
+        [Fact]
+        public void Calculate_ReturnsInterpolatedValue()
+        {
+            // Act
+            // Mock DB: 180->0.99, 190->0.98. Input 185.
+            // Expected: 0.985
+            var result = _calculator.Calculate(1, 185, 5.5);
+
+            // Assert
+            Assert.Equal(0.985, result.LengthFactor);
+        }
     }
 }
