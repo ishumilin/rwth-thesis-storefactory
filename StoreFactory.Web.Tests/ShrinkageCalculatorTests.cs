@@ -15,7 +15,7 @@ namespace StoreFactory.Web.Tests
         }
 
         [Fact]
-        public void Interpolate_ReturnsExactMatch()
+        public void Calculate_ReturnsExactMatch_WhenTemperatureExists()
         {
             // Act
             // (Mock DB has 180C -> 0.99 for Material 1)
@@ -23,6 +23,16 @@ namespace StoreFactory.Web.Tests
 
             // Assert
             Assert.Equal(0.99, result.LengthFactor);
+        }
+
+        [Fact]
+        public void Calculate_ReturnsDefaults_WhenMaterialNotFound()
+        {
+            // Act
+            var result = _calculator.Calculate(999, 180, 5.5);
+
+            // Assert
+            Assert.Equal(1.0, result.LengthFactor);
         }
     }
 }
