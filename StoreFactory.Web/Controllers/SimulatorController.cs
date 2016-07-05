@@ -1,6 +1,9 @@
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using StoreFactory.Web.Services;
 using StoreFactory.Web.Models;
+using StoreFactory.Web.Data;
 
 namespace StoreFactory.Web.Controllers
 {
@@ -17,7 +20,17 @@ namespace StoreFactory.Web.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            var model = new SimulatorViewModel
+            {
+                Materials = MockDatabase.Materials.Select(m => new SelectListItem
+                {
+                    Value = m.Id.ToString(),
+                    Text = m.Name
+                }).ToList(),
+                Temperature = 180,
+                DwellTime = 2.5
+            };
+            return View(model);
         }
 
         [HttpPost]
