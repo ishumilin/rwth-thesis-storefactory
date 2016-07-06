@@ -12,6 +12,10 @@
             <div class="panel-heading">Controls</div>
             <div class="panel-body">
                 <form id="simulatorForm">
+                    <div class="form-group">
+                        <label>Material</label>
+                        <select asp-for="SelectedMaterialId" asp-items="Model.Materials" class="form-control"></select>
+                    </div>
                     <!-- Controls to come -->
                 </form>
             </div>
