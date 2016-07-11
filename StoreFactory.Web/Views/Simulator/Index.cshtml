@@ -16,6 +16,11 @@
                         <label>Material</label>
                         <select asp-for="SelectedMaterialId" asp-items="Model.Materials" class="form-control"></select>
                     </div>
+                    <div class="form-group">
+                        <label>Temperature (&deg;C)</label>
+                        <input asp-for="Temperature" type="range" min="30" max="200" step="1" class="form-control" />
+                        <span id="tempValue">@Model.Temperature</span>
+                    </div>
                     <!-- Controls to come -->
                 </form>
             </div>
