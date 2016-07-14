@@ -26,7 +26,6 @@
                         <input asp-for="DwellTime" type="range" min="1" max="20" step="0.5" class="form-control" />
                         <span id="timeValue">@Model.DwellTime</span>
                     </div>
-                    <!-- Controls to come -->
                 </form>
             </div>
         </div>
@@ -34,7 +33,9 @@
         <div class="panel panel-info">
             <div class="panel-heading">Results</div>
             <div class="panel-body" id="resultsPanel">
-                <!-- Results to come -->
+                <p><strong>Length Factor:</strong> <span id="resLength" class="text-success">-</span></p>
+                <p><strong>Width Factor:</strong> <span id="resWidth" class="text-success">-</span></p>
+                <p><strong>Sleeve Factor:</strong> <span id="resSleeve" class="text-success">-</span></p>
             </div>
         </div>
     </div>
@@ -43,9 +44,12 @@
         <div class="panel panel-default">
             <div class="panel-heading">Visualizer</div>
             <div class="panel-body">
-                <!-- Canvas to come -->
-                <p>Visualizer loading...</p>
+                <canvas id="sweaterCanvas" width="600" height="500" style="border:1px solid #eee;"></canvas>
             </div>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script src="~/js/simulator.js"></script>
+}
