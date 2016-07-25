@@ -45,7 +45,10 @@ var visualizer = (function() {
     }
 
     function drawShape(cx, y, w, l, s) {
-        // Drawing logic to come
+        ctx.beginPath();
+        // Simple Body Rectangle
+        ctx.rect(cx - w/2, y, w, l);
+        ctx.stroke();
     }
     
     return {
