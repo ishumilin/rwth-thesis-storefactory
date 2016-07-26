@@ -46,11 +46,32 @@ var visualizer = (function() {
 
     function drawShape(cx, y, w, l, s) {
         ctx.beginPath();
-        // Body
-        ctx.rect(cx - w/2, y, w, l);
-        // Sleeves (Simple Boxes)
-        ctx.rect(cx - w/2 - s, y, s, 60); // Left
-        ctx.rect(cx + w/2, y, s, 60); // Right
+        // Neck
+        ctx.moveTo(cx - 30, y);
+        ctx.lineTo(cx + 30, y);
+        // Right Shoulder
+        ctx.lineTo(cx + w/2, y + 20);
+        // Right Sleeve Top
+        ctx.lineTo(cx + w/2 + s, y + 60);
+        // Right Sleeve Bottom
+        ctx.lineTo(cx + w/2 + s - 20, y + 100);
+        // Right Armpit
+        ctx.lineTo(cx + w/2, y + 80);
+        // Right Side
+        ctx.lineTo(cx + w/2, y + l);
+        // Bottom
+        ctx.lineTo(cx - w/2, y + l);
+        // Left Side
+        ctx.lineTo(cx - w/2, y + 80);
+        // Left Armpit
+        ctx.lineTo(cx - w/2 - s + 20, y + 100);
+        // Left Sleeve Bottom
+        ctx.lineTo(cx - w/2 - s, y + 60);
+        // Left Sleeve Top
+        ctx.lineTo(cx - w/2, y + 20);
+        // Left Shoulder
+        ctx.lineTo(cx - 30, y);
+        
         ctx.stroke();
     }
     
