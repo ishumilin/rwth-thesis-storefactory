@@ -46,8 +46,11 @@ var visualizer = (function() {
 
     function drawShape(cx, y, w, l, s) {
         ctx.beginPath();
-        // Simple Body Rectangle
+        // Body
         ctx.rect(cx - w/2, y, w, l);
+        // Sleeves (Simple Boxes)
+        ctx.rect(cx - w/2 - s, y, s, 60); // Left
+        ctx.rect(cx + w/2, y, s, 60); // Right
         ctx.stroke();
     }
     
