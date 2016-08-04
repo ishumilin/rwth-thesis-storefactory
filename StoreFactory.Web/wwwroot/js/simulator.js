@@ -38,6 +38,35 @@ $(document).ready(function () {
         });
     }
     
+    // Chart
+    var chartCtx = document.getElementById("shrinkageChart");
+    if (chartCtx) {
+        var myChart = new Chart(chartCtx, {
+            type: 'line',
+            data: {
+                labels: [180, 185, 190, 195],
+                datasets: [{
+                    label: 'Shrinkage Factor',
+                    data: [0.99, 0.985, 0.98, 0.97],
+                    borderColor: "rgba(75,192,192,1)",
+                    fill: false
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: false,
+                            suggestedMin: 0.9,
+                            suggestedMax: 1.1
+                        }
+                    }]
+                }
+            }
+        });
+    }
+
     // Initial Calc
     calculate();
 });
