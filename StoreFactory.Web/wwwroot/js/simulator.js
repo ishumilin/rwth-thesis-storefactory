@@ -17,7 +17,13 @@ $(document).ready(function () {
         calculate();
     });
     
-    $material.change(calculate);
+    $material.change(function() {
+        if (typeof myChart !== 'undefined') {
+            myChart.data.datasets[0].label = "Shrinkage for " + $("#SelectedMaterialId option:selected").text();
+            myChart.update();
+        }
+        calculate();
+    });
     
     function calculate() {
         var data = {
@@ -30,6 +36,15 @@ $(document).ready(function () {
             $("#resLength").text(result.lengthFactor.toFixed(3));
             $("#resWidth").text(result.widthFactor.toFixed(3));
             $("#resSleeve").text(result.sleeveFactor.toFixed(3));
+            
+            // Warning logic (Commit 49)
+            if (result.lengthFactor < 0.95 || result.widthFactor < 0.95) {
+                if ($("#warningMsg").length === 0) {
+                    $("#resultsPanel").append('<div id="warningMsg" class="alert alert-danger" style="margin-top:10px">High Shrinkage Detected!</div>');
+                }
+            } else {
+                $("#warningMsg").remove();
+            }
             
             // Trigger Visualizer Update (Phase 4)
             if (typeof updateVisualizer === "function") {
