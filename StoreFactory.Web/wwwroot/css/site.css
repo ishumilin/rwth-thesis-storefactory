@@ -47,17 +47,3 @@ canvas#sweaterCanvas {
     background-color: #ffffff;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
-
-/* Polish */
-.navbar-inverse {
-    background-color: #222;
-    border-color: #080808;
-}
-
-body {
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-}
-
-h2 {
-    color: #333;
-}

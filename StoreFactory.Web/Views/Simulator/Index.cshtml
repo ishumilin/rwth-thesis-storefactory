@@ -45,6 +45,80 @@
                 <canvas id="shrinkageChart" width="300" height="200"></canvas>
             </div>
         </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">2D Contour (Factor Surface)</div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <label>Factor</label>
+                    <select id="surfaceFactor" class="form-control">
+                        <option value="length" selected>Length</option>
+                        <option value="width">Width</option>
+                        <option value="sleeve">Sleeve</option>
+                    </select>
+                </div>
+                <canvas id="surfaceCanvas" width="300" height="220" style="border:1px solid #eee;"></canvas>
+                <p class="help-block" style="margin-top:8px;">Contour lines show factor levels over Temperature × Dwell Time. Marker shows current setting.</p>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">Presets & Optimization</div>
+            <div class="panel-body">
+                <div class="btn-group" role="group" aria-label="Presets" style="margin-bottom:10px;">
+                    <button type="button" class="btn btn-default" id="presetLow">Low energy</button>
+                    <button type="button" class="btn btn-default" id="presetBalanced">Balanced</button>
+                    <button type="button" class="btn btn-default" id="presetMax">Max shrink</button>
+                    <button type="button" class="btn btn-default" id="presetSafe">Safe</button>
+                </div>
+
+                <div class="form-group">
+                    <label>Target factor (Length)</label>
+                    <input type="number" id="targetFactor" class="form-control" value="0.92" step="0.01" min="0.80" max="1.10" />
+                </div>
+                <button type="button" class="btn btn-primary" id="btnOptimize">Find settings</button>
+                <span id="optStatus" class="text-muted" style="margin-left:10px;"></span>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">Constraints & Explainability</div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <label>Min acceptable Length Factor</label>
+                    <input type="number" id="minLength" class="form-control" value="0.90" step="0.01" min="0.80" max="1.10" />
+                </div>
+                <div id="constraintStatus" class="alert alert-info" style="margin-top:10px;">Constraints not evaluated yet.</div>
+                <div id="explainPanel" class="well well-sm" style="margin-top:10px;">Interpolation: <span id="interpMode">-</span></div>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">Experiment Log</div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <label>Note</label>
+                    <input type="text" id="expNote" class="form-control" placeholder="optional note" />
+                </div>
+                <button type="button" class="btn btn-default" id="btnLog">Log current run</button>
+                <button type="button" class="btn btn-default" id="btnExportCsv">Export CSV</button>
+
+                <table class="table table-condensed" style="margin-top:10px;">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Mat</th>
+                            <th>T</th>
+                            <th>D</th>
+                            <th>L</th>
+                            <th>W</th>
+                            <th>S</th>
+                        </tr>
+                    </thead>
+                    <tbody id="expTable"></tbody>
+                </table>
+            </div>
+        </div>
     </div>
     
     <div class="col-md-8">

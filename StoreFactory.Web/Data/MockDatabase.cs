@@ -19,21 +19,55 @@ namespace StoreFactory.Web.Data
             Materials.Add(new Material { Id = 1, Name = "Polyester (PES)", Description = "Synthetic Fiber" });
             Materials.Add(new Material { Id = 2, Name = "Wool", Description = "Natural Fiber" });
 
-            // Seed Shrinkage Data - Polyester (Table 5.1)
-            // Series 1: PES Black, 40x40cm
-            ShrinkageParameters.Add(new ShrinkageData { ProductId = 1, MaterialId = 1, Temperature = 180, DwellTime = 5.5, LengthFactor = 0.99, WidthFactor = 0.99, SleeveFactor = 0.99 });
-            ShrinkageParameters.Add(new ShrinkageData { ProductId = 1, MaterialId = 1, Temperature = 190, DwellTime = 2.5, LengthFactor = 0.98, WidthFactor = 0.98, SleeveFactor = 0.98 });
-            ShrinkageParameters.Add(new ShrinkageData { ProductId = 1, MaterialId = 1, Temperature = 195, DwellTime = 1.0, LengthFactor = 0.97, WidthFactor = 0.97, SleeveFactor = 0.97 });
+            // Seed Shrinkage Data
+            // We intentionally use *synthetic* data here to ensure both Temperature and DwellTime
+            // influence the result and the UI looks responsive. We don't aim to match thesis values.
+            SeedSyntheticShrinkageGrid(productId: 1, materialId: 1, baseFactor: 1.00, tempSensitivity: -0.0009, dwellSensitivity: -0.006);
+            SeedSyntheticShrinkageGrid(productId: 1, materialId: 2, baseFactor: 1.02, tempSensitivity: -0.0004, dwellSensitivity: -0.003);
+        }
 
-            // Seed Shrinkage Data - Wool (Table 5.3)
-            // Series 2: Wool, Red/White/Black
-            ShrinkageParameters.Add(new ShrinkageData { ProductId = 1, MaterialId = 2, Temperature = 30, DwellTime = 10, LengthFactor = 1.04, WidthFactor = 0.94, SleeveFactor = 0.96 });
-            ShrinkageParameters.Add(new ShrinkageData { ProductId = 1, MaterialId = 2, Temperature = 30, DwellTime = 20, LengthFactor = 1.03, WidthFactor = 0.95, SleeveFactor = 0.95 });
+        private static void SeedSyntheticShrinkageGrid(int productId, int materialId, double baseFactor, double tempSensitivity, double dwellSensitivity)
+        {
+            // Small 2D grid for bilinear interpolation
+            // Temperatures: 30, 100, 150, 200
+            // Dwell times: 1, 5, 10, 20
+            // Factor formula:
+            //   f = base + tempSensitivity*(T-30) + dwellSensitivity*(D-1)
+            // Clamp to a reasonable visual range.
+            var temps = new[] { 30.0, 100.0, 150.0, 200.0 };
+            var dwells = new[] { 1.0, 5.0, 10.0, 20.0 };
 
-            // Seed Shrinkage Data - Color (Table 5.5)
-            // Color Specific Factors
-            ShrinkageParameters.Add(new ShrinkageData { ProductId = 1, MaterialId = 2, Temperature = 30, DwellTime = 10, LengthFactor = 0.96, WidthFactor = 0.96, SleeveFactor = 0.96 }); // Black
-            ShrinkageParameters.Add(new ShrinkageData { ProductId = 1, MaterialId = 2, Temperature = 30, DwellTime = 10, LengthFactor = 0.97, WidthFactor = 1.04, SleeveFactor = 0.94 }); // Pink
+            foreach (var t in temps)
+            {
+                foreach (var d in dwells)
+                {
+                    var f = baseFactor + tempSensitivity * (t - 30.0) + dwellSensitivity * (d - 1.0);
+                    f = Clamp(f, 0.85, 1.10);
+
+                    // Slightly different behavior per dimension to make the sweater visibly change
+                    var length = f;
+                    var width = Clamp(f + 0.01 * (materialId == 2 ? 1 : -1), 0.85, 1.10);
+                    var sleeve = Clamp(f + 0.005 * (dwellSensitivity < 0 ? -1 : 1), 0.85, 1.10);
+
+                    ShrinkageParameters.Add(new ShrinkageData
+                    {
+                        ProductId = productId,
+                        MaterialId = materialId,
+                        Temperature = t,
+                        DwellTime = d,
+                        LengthFactor = length,
+                        WidthFactor = width,
+                        SleeveFactor = sleeve
+                    });
+                }
+            }
+        }
+
+        private static double Clamp(double value, double min, double max)
+        {
+            if (value < min) return min;
+            if (value > max) return max;
+            return value;
         }
     }
 }
