@@ -34,8 +34,72 @@ body {
     font-weight: bold;
 }
 
+.sf-panel-compact .panel-body {
+    padding: 12px;
+}
+
+.sf-range-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.sf-range-row input[type="range"].form-control {
+    flex: 1;
+}
+
+.sf-range-value {
+    min-width: 46px;
+    text-align: right;
+    font-weight: 600;
+    color: #333;
+}
+
+.sf-result-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.sf-result-row:last-child {
+    border-bottom: none;
+}
+
+.sf-result-label {
+    color: #555;
+}
+
+.sf-result-value {
+    font-size: 18px;
+    line-height: 1;
+}
+
+.sf-tabs {
+    margin-top: 10px;
+}
+
+.sf-panel-tab {
+    border-top: none;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
 #resultsPanel {
     background-color: #f9f9f9;
+    position: relative;
+    min-height: 140px;
+    padding-bottom: 36px;
+}
+
+#loadingOverlay {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 8px;
+    text-align: center;
+    font-style: italic;
 }
 
 .text-success {
@@ -46,4 +110,18 @@ body {
 canvas#sweaterCanvas {
     background-color: #ffffff;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Polish */
+.navbar-inverse {
+    background-color: #222;
+    border-color: #080808;
+}
+
+body {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+h2 {
+    color: #333;
 }
