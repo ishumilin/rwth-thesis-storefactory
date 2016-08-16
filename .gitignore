@@ -2,3 +2,7 @@ bin/
 obj/
 .vs/
 *.user
+.DS_Store
+*.suo
+*.userosscache
+*.sln.docstates
