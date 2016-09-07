@@ -1,0 +1,119 @@
+@{
+    ViewData["Title"] = "Analysis";
+}
+
+<div class="page-header" style="margin-top:0">
+    <h2 style="margin-top:0">Simulation Analysis <small>fabric behavior & quality</small></h2>
+</div>
+
+<p class="text-muted sf-analysis-intro">
+    This page shows <strong>analysis results only</strong> (precomputed via Python scripts and served as static JSON).
+    Current dataset: <strong>measurements.csv</strong> (real data).
+    For parallel processing benchmarks, open <a asp-controller="Analysis" asp-action="Performance">Performance Analysis</a>.
+    For interactive fabric behavior simulation, open <a asp-controller="Simulator" asp-action="Index">Simulator</a>.
+</p>
+
+<div class="panel panel-default sf-analysis-summary">
+    <div class="panel-heading">Simulation summary</div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="sf-metric">
+                    <div class="sf-metric-label">Status</div>
+                    <div class="sf-metric-value" id="analysisLoadStatus">Loading...</div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="sf-metric">
+                    <div class="sf-metric-label">Rows</div>
+                    <div class="sf-metric-value" id="analysisRows">-</div>
+                    <div class="sf-metric-sub">
+                        materials: <span id="analysisMaterials">-</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="sf-metric">
+                    <div class="sf-metric-label">Safe band</div>
+                    <div class="sf-metric-value">0.95–1.05</div>
+                    <div class="sf-metric-sub">length factor range</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row sf-analysis-grid">
+    <div class="col-md-6">
+        <div class="panel panel-warning sf-analysis-panel">
+            <div class="panel-heading">Length factor vs. temperature</div>
+            <div class="panel-body">
+                <div class="sf-canvas-wrap">
+                    <canvas id="analysisTempChart" height="220"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="panel panel-warning sf-analysis-panel">
+            <div class="panel-heading">Length factor vs. dwell time</div>
+            <div class="panel-body">
+                <div class="sf-canvas-wrap">
+                    <canvas id="analysisDwellChart" height="220"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row sf-analysis-grid">
+    <div class="col-md-6">
+        <div class="panel panel-warning sf-analysis-panel">
+            <div class="panel-heading">Material comparison (radar)</div>
+            <div class="panel-body">
+                <div class="sf-canvas-wrap">
+                    <canvas id="analysisRadarChart" height="240"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="panel panel-warning sf-analysis-panel">
+            <div class="panel-heading">Shrinkage distribution (length)</div>
+            <div class="panel-body">
+                <div class="sf-canvas-wrap">
+                    <canvas id="analysisHistogramChart" height="220"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row sf-analysis-grid">
+    <div class="col-md-6">
+        <div class="panel panel-warning sf-analysis-panel">
+            <div class="panel-heading">Stability heatmap (safe band %)</div>
+            <div class="panel-body">
+                <div class="sf-canvas-wrap">
+                    <canvas id="analysisStabilityChart" height="240"></canvas>
+                </div>
+                <p class="help-block" style="margin-top:8px;">% of samples with length factor 0.95–1.05.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="panel panel-warning sf-analysis-panel">
+            <div class="panel-heading">Risk index (below 0.95)</div>
+            <div class="panel-body">
+                <div class="sf-canvas-wrap">
+                    <canvas id="analysisRiskChart" height="220"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+    <script src="~/js/analysis.js"></script>
+}

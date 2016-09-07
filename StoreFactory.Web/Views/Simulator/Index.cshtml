@@ -9,173 +9,193 @@
 </div>
 
 <div class="row">
-    <!-- Left: workflow controls + summary -->
-    <div class="col-md-4">
-        <div class="panel panel-default sf-panel-compact">
-            <div class="panel-heading">Quick controls</div>
+    <!-- Left: workflow controls + summary + tools -->
+    <div class="col-lg-3 col-md-4">
+        <div class="sf-section">
+            <div class="sf-section-title">Inputs</div>
+            <div class="panel panel-default sf-panel-compact">
+                <div class="panel-body">
+                    <form id="simulatorForm">
+                        <div class="form-group">
+                            <label>Material</label>
+                            <select asp-for="SelectedMaterialId" asp-items="Model.Materials" class="form-control"></select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Temperature <span class="sf-unit">&deg;C</span></label>
+                            <div class="sf-range-row">
+                                <input asp-for="Temperature" type="range" min="30" max="200" step="1" class="form-control" />
+                                <span id="tempValue" class="sf-range-value">@Model.Temperature</span>
+                            </div>
+                            <div class="sf-range-hint">Range 30&ndash;200 &deg;C</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Dwell Time <span class="sf-unit">m/min</span></label>
+                            <div class="sf-range-row">
+                                <input asp-for="DwellTime" type="range" min="1" max="20" step="0.5" class="form-control" />
+                                <span id="timeValue" class="sf-range-value">@Model.DwellTime</span>
+                            </div>
+                            <div class="sf-range-hint">Range 1&ndash;20 m/min</div>
+                        </div>
+                    </form>
+
+                    <div class="help-block" style="margin-bottom:0">
+                        Tip: <strong>1.00</strong> = no change, <strong>&lt; 1</strong> shrink, <strong>&gt; 1</strong> expand.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sf-section">
+            <div class="sf-section-title">Results</div>
+            <div class="panel panel-info sf-panel-compact">
+                <div class="panel-body" id="resultsPanel">
+                    <div class="sf-result-row">
+                        <div>
+                            <div class="sf-result-label">Length factor</div>
+                            <div class="sf-result-caption">Main shrinkage indicator</div>
+                        </div>
+                        <div id="resLength" class="sf-result-value text-success">-</div>
+                    </div>
+                    <div class="sf-result-row">
+                        <div>
+                            <div class="sf-result-label">Width factor</div>
+                            <div class="sf-result-caption">Cross direction change</div>
+                        </div>
+                        <div id="resWidth" class="sf-result-value text-success">-</div>
+                    </div>
+                    <div class="sf-result-row">
+                        <div>
+                            <div class="sf-result-label">Sleeve factor</div>
+                            <div class="sf-result-caption">Sleeve dimension change</div>
+                        </div>
+                        <div id="resSleeve" class="sf-result-value text-success">-</div>
+                    </div>
+                    <!-- warningMsg and loadingOverlay are injected here by simulator.js -->
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Middle: visualizer always visible -->
+    <div class="col-lg-6 col-md-8">
+        <div class="panel panel-default">
+            <div class="panel-heading">Visualizer</div>
             <div class="panel-body">
-                <form id="simulatorForm">
-                    <div class="form-group">
-                        <label>Material</label>
-                        <select asp-for="SelectedMaterialId" asp-items="Model.Materials" class="form-control"></select>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Temperature (&deg;C)</label>
-                        <div class="sf-range-row">
-                            <input asp-for="Temperature" type="range" min="30" max="200" step="1" class="form-control" />
-                            <span id="tempValue" class="sf-range-value">@Model.Temperature</span>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Dwell Time (m/min)</label>
-                        <div class="sf-range-row">
-                            <input asp-for="DwellTime" type="range" min="1" max="20" step="0.5" class="form-control" />
-                            <span id="timeValue" class="sf-range-value">@Model.DwellTime</span>
-                        </div>
-                    </div>
-                </form>
-
-                <div class="help-block" style="margin-bottom:0">
-                    Tip: <strong>1.00</strong> = no change, <strong>&lt; 1</strong> shrink, <strong>&gt; 1</strong> expand.
-                </div>
-            </div>
-        </div>
-
-        <div class="panel panel-info sf-panel-compact">
-            <div class="panel-heading">Results summary</div>
-            <div class="panel-body" id="resultsPanel">
-                <div class="sf-result-row">
-                    <div class="sf-result-label">Length factor</div>
-                    <div id="resLength" class="sf-result-value text-success">-</div>
-                </div>
-                <div class="sf-result-row">
-                    <div class="sf-result-label">Width factor</div>
-                    <div id="resWidth" class="sf-result-value text-success">-</div>
-                </div>
-                <div class="sf-result-row">
-                    <div class="sf-result-label">Sleeve factor</div>
-                    <div id="resSleeve" class="sf-result-value text-success">-</div>
-                </div>
-                <!-- warningMsg and loadingOverlay are injected here by simulator.js -->
-            </div>
-        </div>
-
-        <!-- Advanced tooling: tabs -->
-        <div class="sf-tabs">
-            <ul class="nav nav-tabs" role="tablist">
-                <li role="presentation" class="active"><a href="#tab-charts" aria-controls="tab-charts" role="tab" data-toggle="tab">Charts</a></li>
-                <li role="presentation"><a href="#tab-surface" aria-controls="tab-surface" role="tab" data-toggle="tab">Surface</a></li>
-                <li role="presentation"><a href="#tab-opt" aria-controls="tab-opt" role="tab" data-toggle="tab">Optimize</a></li>
-                <li role="presentation"><a href="#tab-log" aria-controls="tab-log" role="tab" data-toggle="tab">Log</a></li>
-                <li role="presentation"><a href="#tab-explain" aria-controls="tab-explain" role="tab" data-toggle="tab">Explain</a></li>
-            </ul>
-
-            <div class="tab-content">
-                <div role="tabpanel" class="tab-pane active" id="tab-charts">
-                    <div class="panel panel-warning sf-panel-tab">
-                        <div class="panel-heading">Curve chart</div>
-                        <div class="panel-body">
-                            <canvas id="shrinkageChart" width="300" height="200"></canvas>
-                            <p class="help-block" style="margin-top:8px;">Shows how the length factor changes across temperatures for the current dwell time.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div role="tabpanel" class="tab-pane" id="tab-surface">
-                    <div class="panel panel-default sf-panel-tab">
-                        <div class="panel-heading">2D contour (factor surface)</div>
-                        <div class="panel-body">
-                            <div class="form-group">
-                                <label>Factor</label>
-                                <select id="surfaceFactor" class="form-control">
-                                    <option value="length" selected>Length</option>
-                                    <option value="width">Width</option>
-                                    <option value="sleeve">Sleeve</option>
-                                </select>
-                            </div>
-                            <canvas id="surfaceCanvas" width="300" height="220" style="border:1px solid #eee;"></canvas>
-                            <p class="help-block" style="margin-top:8px;">Contour lines show factor levels over Temperature × Dwell Time. Marker shows current setting.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div role="tabpanel" class="tab-pane" id="tab-opt">
-                    <div class="panel panel-default sf-panel-tab">
-                        <div class="panel-heading">Presets & optimization</div>
-                        <div class="panel-body">
-                            <div class="btn-group" role="group" aria-label="Presets" style="margin-bottom:10px;">
-                                <button type="button" class="btn btn-default" id="presetLow">Low energy</button>
-                                <button type="button" class="btn btn-default" id="presetBalanced">Balanced</button>
-                                <button type="button" class="btn btn-default" id="presetMax">Max shrink</button>
-                                <button type="button" class="btn btn-default" id="presetSafe">Safe</button>
-                            </div>
-
-                            <div class="form-group">
-                                <label>Target factor (Length)</label>
-                                <input type="number" id="targetFactor" class="form-control" value="0.92" step="0.01" min="0.80" max="1.10" />
-                            </div>
-                            <button type="button" class="btn btn-primary" id="btnOptimize">Find settings</button>
-                            <span id="optStatus" class="text-muted" style="margin-left:10px;"></span>
-                        </div>
-                    </div>
-                </div>
-
-                <div role="tabpanel" class="tab-pane" id="tab-log">
-                    <div class="panel panel-default sf-panel-tab">
-                        <div class="panel-heading">Experiment log</div>
-                        <div class="panel-body">
-                            <div class="form-group">
-                                <label>Note</label>
-                                <input type="text" id="expNote" class="form-control" placeholder="optional note" />
-                            </div>
-                            <button type="button" class="btn btn-default" id="btnLog">Log current run</button>
-                            <button type="button" class="btn btn-default" id="btnExportCsv">Export CSV</button>
-
-                            <div class="table-responsive" style="margin-top:10px;">
-                                <table class="table table-condensed">
-                                    <thead>
-                                        <tr>
-                                            <th>Time</th>
-                                            <th>Mat</th>
-                                            <th>T</th>
-                                            <th>D</th>
-                                            <th>L</th>
-                                            <th>W</th>
-                                            <th>S</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="expTable"></tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div role="tabpanel" class="tab-pane" id="tab-explain">
-                    <div class="panel panel-default sf-panel-tab">
-                        <div class="panel-heading">Constraints & explainability</div>
-                        <div class="panel-body">
-                            <div class="form-group">
-                                <label>Min acceptable Length Factor</label>
-                                <input type="number" id="minLength" class="form-control" value="0.90" step="0.01" min="0.80" max="1.10" />
-                            </div>
-                            <div id="constraintStatus" class="alert alert-info" style="margin-top:10px;">Constraints not evaluated yet.</div>
-                            <div id="explainPanel" class="well well-sm" style="margin-top:10px;">Interpolation: <span id="interpMode">-</span></div>
-                        </div>
-                    </div>
-                </div>
+                <canvas id="sweaterCanvas" width="520" height="480" style="border:1px solid #eee;"></canvas>
             </div>
         </div>
     </div>
 
-    <!-- Right: visualizer always visible -->
-    <div class="col-md-8">
-        <div class="panel panel-default">
-            <div class="panel-heading">Visualizer</div>
-            <div class="panel-body">
-                <canvas id="sweaterCanvas" width="600" height="500" style="border:1px solid #eee;"></canvas>
+    <!-- Right: insights -->
+    <div class="col-lg-3 col-md-12">
+        <div class="sf-section">
+            <div class="sf-section-title">Insights</div>
+            <div class="panel panel-warning sf-panel-compact sf-panel-insight">
+                <div class="panel-heading">Curve chart</div>
+                <div class="panel-body">
+                    <p class="sf-tab-desc">See how length factor changes across temperatures for the current dwell time.</p>
+                    <div class="sf-canvas-wrap">
+                        <canvas id="shrinkageChart" width="320" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sf-section">
+            <div class="panel panel-default sf-panel-compact sf-panel-insight">
+                <div class="panel-heading">2D contour (factor surface)</div>
+                <div class="panel-body">
+                    <p class="sf-tab-desc">Explore shrinkage levels across Temperature × Dwell Time.</p>
+                    <div class="form-group">
+                        <label>Factor</label>
+                        <select id="surfaceFactor" class="form-control">
+                            <option value="length" selected>Length</option>
+                            <option value="width">Width</option>
+                            <option value="sleeve">Sleeve</option>
+                        </select>
+                    </div>
+                    <div class="sf-canvas-wrap">
+                        <canvas id="surfaceCanvas" width="320" height="220" style="border:1px solid #eee;"></canvas>
+                    </div>
+                    <p class="help-block" style="margin-top:8px;">Contour lines show factor levels over Temperature × Dwell Time. Marker shows current setting.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="sf-tooling">
+    <div class="sf-section-title">Tools</div>
+    <div class="row">
+        <div class="col-lg-4 col-md-6">
+            <div class="panel panel-default sf-panel-compact">
+                <div class="panel-heading">Presets & optimization</div>
+                <div class="panel-body">
+                    <p class="sf-tab-desc">Pick a preset or search for a target shrinkage factor.</p>
+                    <div class="btn-group" role="group" aria-label="Presets" style="margin-bottom:10px;">
+                        <button type="button" class="btn btn-default" id="presetLow">Low energy</button>
+                        <button type="button" class="btn btn-default" id="presetBalanced">Balanced</button>
+                        <button type="button" class="btn btn-default" id="presetMax">Max shrink</button>
+                        <button type="button" class="btn btn-default" id="presetSafe">Safe</button>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Target factor (Length)</label>
+                        <input type="number" id="targetFactor" class="form-control" value="0.92" step="0.01" min="0.80" max="1.10" />
+                    </div>
+                    <button type="button" class="btn btn-primary" id="btnOptimize">Find settings</button>
+                    <span id="optStatus" class="text-muted" style="margin-left:10px;"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6">
+            <div class="panel panel-default sf-panel-compact">
+                <div class="panel-heading">Experiment log</div>
+                <div class="panel-body">
+                    <p class="sf-tab-desc">Capture current runs and export the last results.</p>
+                    <div class="form-group">
+                        <label>Note</label>
+                        <input type="text" id="expNote" class="form-control" placeholder="optional note" />
+                    </div>
+                    <button type="button" class="btn btn-default" id="btnLog">Log current run</button>
+                    <button type="button" class="btn btn-default" id="btnExportCsv">Export CSV</button>
+
+                    <div class="table-responsive" style="margin-top:10px;">
+                        <table class="table table-condensed">
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Mat</th>
+                                    <th>T</th>
+                                    <th>D</th>
+                                    <th>L</th>
+                                    <th>W</th>
+                                    <th>S</th>
+                                </tr>
+                            </thead>
+                            <tbody id="expTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6">
+            <div class="panel panel-default sf-panel-compact">
+                <div class="panel-heading">Constraints & explainability</div>
+                <div class="panel-body">
+                    <p class="sf-tab-desc">Set a minimum acceptable factor and review interpolation logic.</p>
+                    <div class="form-group">
+                        <label>Min acceptable Length Factor</label>
+                        <input type="number" id="minLength" class="form-control" value="0.90" step="0.01" min="0.80" max="1.10" />
+                    </div>
+                    <div id="constraintStatus" class="alert alert-info" style="margin-top:10px;">Constraints not evaluated yet.</div>
+                    <div id="explainPanel" class="well well-sm" style="margin-top:10px;">Interpolation: <span id="interpMode">-</span></div>
+                </div>
             </div>
         </div>
     </div>
