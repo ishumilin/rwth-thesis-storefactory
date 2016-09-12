@@ -11,4 +11,10 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="1.1.2" />
   </ItemGroup>
 
+  <!-- The SDK already includes wwwroot/** as Content by default.
+       We only need to tweak metadata so these assets are copied to the build output. -->
+  <ItemGroup>
+    <Content Update="wwwroot/**" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>

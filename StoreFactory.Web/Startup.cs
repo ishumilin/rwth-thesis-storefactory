@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -39,7 +40,18 @@ namespace StoreFactory.Web
                 app.UseExceptionHandler("/Home/Error");
             }
 
-            app.UseStaticFiles();
+            // Explicitly enable serving .gltf files.
+            // Depending on hosting defaults, unknown extensions may be blocked,
+            // which results in 404 even though the file exists on disk.
+            var contentTypeProvider = new FileExtensionContentTypeProvider();
+            contentTypeProvider.Mappings[".gltf"] = "model/gltf+json";
+            // Needed by the BabylonJS v2.2 glTF 1.0 loader for shader URIs referenced by the models.
+            contentTypeProvider.Mappings[".glsl"] = "text/plain";
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                ContentTypeProvider = contentTypeProvider
+            });
 
             app.UseMvc(routes =>
             {
