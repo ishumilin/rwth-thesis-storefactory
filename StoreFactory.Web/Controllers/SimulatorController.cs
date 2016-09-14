@@ -140,6 +140,118 @@ namespace StoreFactory.Web.Controllers
         }
 
         [HttpPost]
+        public JsonResult Recommend(RecommendRequest request)
+        {
+            if (request == null)
+            {
+                return Json(new RecommendResponse { Mode = "unknown" });
+            }
+
+            var res = new RecommendResponse { Mode = request.Mode ?? "throughput" };
+
+            bool IsFeasible(ShrinkageData r, double t, double d)
+            {
+                if (r == null) return false;
+                if (r.LengthFactor < request.MinLengthFactor) return false;
+                if (r.WidthFactor < request.MinWidthFactor) return false;
+                if (r.SleeveFactor < request.MinSleeveFactor) return false;
+                if (request.MaxTemperature.HasValue && t > request.MaxTemperature.Value) return false;
+                if (request.MaxDwellTime.HasValue && d > request.MaxDwellTime.Value) return false;
+                return true;
+            }
+
+            double Score(string mode, ShrinkageData r, double t, double d)
+            {
+                mode = (mode ?? "").Trim().ToLowerInvariant();
+                switch (mode)
+                {
+                    case "energy":
+                        // Approx: lower temperature is primary, lower dwell is secondary.
+                        return t + 0.2 * d;
+
+                    case "target":
+                        // Minimize distance to target vector; add tiny tie-break for lower process effort.
+                        var dl = r.LengthFactor - request.TargetLengthFactor;
+                        var dw = r.WidthFactor - request.TargetWidthFactor;
+                        var ds = r.SleeveFactor - request.TargetSleeveFactor;
+                        return Math.Sqrt(dl * dl + dw * dw + ds * ds) + 0.0001 * t + 0.001 * d;
+
+                    case "throughput":
+                    default:
+                        // Approx: lower dwell is primary, lower temp is secondary.
+                        return d + 0.01 * t;
+                }
+            }
+
+            // Keep top N candidates by score
+            var topN = new List<RecommendCandidate>();
+
+            int stepT = Math.Max(1, request.StepTemperature);
+            double stepD = Math.Max(0.1, request.StepDwellTime);
+
+            for (var t = request.StartTemperature; t <= request.EndTemperature; t += stepT)
+            {
+                for (var d = request.StartDwellTime; d <= request.EndDwellTime + 1e-9; d += stepD)
+                {
+                    res.EvaluatedPoints++;
+                    var dRound = Math.Round(d, 2);
+                    var r = _calculator.Calculate(request.MaterialId, t, dRound);
+                    if (!IsFeasible(r, t, dRound))
+                    {
+                        continue;
+                    }
+                    res.FeasiblePoints++;
+
+                    var s = Score(res.Mode, r, t, dRound);
+                    var cand = new RecommendCandidate
+                    {
+                        Temperature = t,
+                        DwellTime = dRound,
+                        Score = s,
+                        Result = r
+                    };
+
+                    // Insert in sorted order
+                    var inserted = false;
+                    for (int i = 0; i < topN.Count; i++)
+                    {
+                        if (s < topN[i].Score)
+                        {
+                            topN.Insert(i, cand);
+                            inserted = true;
+                            break;
+                        }
+                    }
+                    if (!inserted)
+                    {
+                        topN.Add(cand);
+                    }
+
+                    if (topN.Count > Math.Max(1, request.TopN))
+                    {
+                        topN.RemoveAt(topN.Count - 1);
+                    }
+                }
+            }
+
+            if (topN.Count > 0)
+            {
+                topN[0].Label = "Best";
+            }
+            if (topN.Count > 1)
+            {
+                topN[1].Label = "Alt 1";
+            }
+            if (topN.Count > 2)
+            {
+                topN[2].Label = "Alt 2";
+            }
+
+            res.Candidates = topN;
+            return Json(res);
+        }
+
+        [HttpPost]
         public JsonResult Log(ExperimentEntry entry)
         {
             if (entry == null)

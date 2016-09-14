@@ -7,6 +7,14 @@ $(document).ready(function () {
     var $tempVal = $("#tempValue");
     var $timeVal = $("#timeValue");
 
+    // Smart-factory recommendation controls
+    var $recMode = $("#recMode");
+    var $recTargets = $("#recTargets");
+    var $btnRecommend = $("#btnRecommend");
+    var $recStatus = $("#recStatus");
+    var $recResults = $("#recResults");
+    var $recTable = $("#recTable");
+
     var $surfaceFactor = $("#surfaceFactor");
     var $minLength = $("#minLength");
     var $constraintStatus = $("#constraintStatus");
@@ -61,6 +69,13 @@ $(document).ready(function () {
     $surfaceFactor.change(function () {
         debounceCalculate();
     });
+
+    if ($recMode && $recMode.length) {
+        $recMode.on('change', function () {
+            var mode = String($recMode.val() || 'throughput');
+            $recTargets.toggle(mode === 'target');
+        });
+    }
 
     $minLength.on("input", function () {
         updateConstraints();
@@ -544,6 +559,85 @@ $(document).ready(function () {
         }
     }
 
+    function updateConfidenceBadge(result) {
+        // Very simple confidence heuristic:
+        // if inputs align to grid (temp integer, dwell on 0.5 steps) => higher confidence.
+        // This uses existing data assumptions without needing extra metadata.
+        var t = parseFloat($temp.val());
+        var d = parseFloat($time.val());
+
+        var onGridT = Math.abs(t - Math.round(t)) < 1e-9;
+        var onGridD = Math.abs((d * 2) - Math.round(d * 2)) < 1e-9;
+
+        var label = (onGridT && onGridD) ? 'High' : (onGridT || onGridD) ? 'Medium' : 'Low';
+        var $conf = $('#resConfidence');
+        if (!$conf.length) return;
+        $conf.text(label);
+        $conf.removeClass('text-success text-warning text-danger');
+        if (label === 'High') $conf.addClass('text-success');
+        if (label === 'Medium') $conf.addClass('text-warning');
+        if (label === 'Low') $conf.addClass('text-danger');
+    }
+
+    function recommendSettings() {
+        if (!$btnRecommend.length) return;
+
+        $recStatus.text('Searching...');
+        $recResults.hide();
+        $recTable.empty();
+
+        var payload = {
+            materialId: parseInt($material.val(), 10),
+            mode: String($recMode.val() || 'throughput'),
+            minLengthFactor: parseFloat($('#recMinLength').val() || 0),
+            minWidthFactor: parseFloat($('#recMinWidth').val() || 0),
+            minSleeveFactor: parseFloat($('#recMinSleeve').val() || 0),
+            maxTemperature: ($('#recMaxTemp').val() === '' ? null : parseFloat($('#recMaxTemp').val())),
+            maxDwellTime: ($('#recMaxDwell').val() === '' ? null : parseFloat($('#recMaxDwell').val())),
+            targetLengthFactor: parseFloat($('#recTargetLength').val() || 0.95),
+            targetWidthFactor: parseFloat($('#recTargetWidth').val() || 0.95),
+            targetSleeveFactor: parseFloat($('#recTargetSleeve').val() || 0.95),
+            topN: 3
+        };
+
+        $.post('/Simulator/Recommend', payload).done(function (res) {
+            if (!res || !res.candidates || res.candidates.length === 0) {
+                $recStatus.text('No feasible settings found for these constraints.');
+                return;
+            }
+
+            $recStatus.text('Found ' + res.candidates.length + ' candidate(s) (feasible=' + res.feasiblePoints + ' / evaluated=' + res.evaluatedPoints + ')');
+            for (var i = 0; i < res.candidates.length; i++) {
+                (function (cand) {
+                    var r = cand.result || {};
+                    var tr = $('<tr></tr>');
+                    tr.append('<td>' + (cand.label || '') + '</td>');
+                    tr.append('<td>' + cand.temperature + '</td>');
+                    tr.append('<td>' + cand.dwellTime + '</td>');
+                    tr.append('<td>' + (r.lengthFactor != null ? r.lengthFactor.toFixed(3) : '-') + '</td>');
+                    tr.append('<td>' + (r.widthFactor != null ? r.widthFactor.toFixed(3) : '-') + '</td>');
+                    tr.append('<td>' + (r.sleeveFactor != null ? r.sleeveFactor.toFixed(3) : '-') + '</td>');
+
+                    var $btn = $('<button type="button" class="btn btn-xs btn-primary">Apply</button>');
+                    $btn.on('click', function () {
+                        setControls(parseFloat(cand.temperature), parseFloat(cand.dwellTime));
+                    });
+                    var td = $('<td></td>').append($btn);
+                    tr.append(td);
+                    $recTable.append(tr);
+                })(res.candidates[i]);
+            }
+
+            $recResults.show();
+        }).fail(function () {
+            $recStatus.text('Recommend failed. Check server logs.');
+        });
+    }
+
+    $btnRecommend.on('click', function () {
+        recommendSettings();
+    });
+
     function calculateAndUpdate() {
         showLoading(true);
         var data = {
@@ -560,6 +654,7 @@ $(document).ready(function () {
             $("#resLength").text(result.lengthFactor.toFixed(3));
             $("#resWidth").text(result.widthFactor.toFixed(3));
             $("#resSleeve").text(result.sleeveFactor.toFixed(3));
+            updateConfidenceBadge(result);
 
             // Warning logic
             if (result.lengthFactor < 0.95 || result.widthFactor < 0.95) {
@@ -573,6 +668,10 @@ $(document).ready(function () {
             // Visualizer
             if (typeof updateVisualizer === "function") {
                 updateVisualizer(result);
+            }
+
+            if (typeof mannequinViewer !== "undefined" && mannequinViewer.updateShrinkage) {
+                mannequinViewer.updateShrinkage(result);
             }
 
             // Curve chart (single call)
