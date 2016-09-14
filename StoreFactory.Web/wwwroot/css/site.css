@@ -3,6 +3,12 @@ body {
     padding-bottom: 20px;
 }
 
+/* Prevent accidental horizontal scrolling caused by wide canvases/tables */
+html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
 /* Wrapping element */
 /* Set some basic padding to keep content from hitting the edges */
 .body-content {
@@ -36,6 +42,13 @@ body {
 
 .sf-section {
     margin-bottom: 12px;
+}
+
+/* Better vertical rhythm on bigger screens */
+@media (min-width: 992px) {
+    .sf-section {
+        margin-bottom: 16px;
+    }
 }
 
 .sf-section-title {
@@ -149,6 +162,34 @@ body {
 
 .sf-canvas-wrap canvas {
     display: block;
+    width: 100%;
+    height: auto;
+}
+
+/* Canvases outside .sf-canvas-wrap (e.g., visualizer) */
+canvas {
+    max-width: 100%;
+}
+
+/* Make tables never force overflow */
+.table-responsive {
+    border: 0;
+}
+
+/* Improve small-screen layout to avoid tight / overlapping UI */
+@media (max-width: 991px) {
+    .sf-tooling .btn {
+        margin-bottom: 6px;
+    }
+
+    .sf-result-value {
+        font-size: 16px;
+    }
+}
+
+/* Visualizer canvases: keep within column width and avoid fixed pixel overflow */
+#sweaterCanvas,
+#mannequinCanvas {
     width: 100%;
     height: auto;
 }

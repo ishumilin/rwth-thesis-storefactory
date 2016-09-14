@@ -10,7 +10,7 @@
 
 <div class="row">
     <!-- Left: workflow controls + summary + tools -->
-    <div class="col-lg-3 col-md-4">
+    <div class="col-lg-3 col-md-4 col-sm-12">
         <div class="sf-section">
             <div class="sf-section-title">Inputs</div>
             <div class="panel panel-default sf-panel-compact">
@@ -188,7 +188,7 @@
     </div>
 
     <!-- Middle: visualizer always visible -->
-    <div class="col-lg-6 col-md-8">
+    <div class="col-lg-6 col-md-8 col-sm-12">
         <div class="panel panel-default">
             <div class="panel-heading">
                 Visualizer
@@ -198,8 +198,12 @@
                 </div>
             </div>
             <div class="panel-body">
-                <canvas id="sweaterCanvas" width="520" height="480" style="border:1px solid #eee;"></canvas>
-                <canvas id="mannequinCanvas" width="520" height="480" style="border:1px solid #eee; display:none;" data-models-root="@Url.Content("~/models/")"></canvas>
+                <div class="sf-canvas-wrap">
+                    <canvas id="sweaterCanvas" width="520" height="480" style="border:1px solid #eee;"></canvas>
+                </div>
+                <div class="sf-canvas-wrap">
+                    <canvas id="mannequinCanvas" width="520" height="480" style="border:1px solid #eee; display:none;" data-models-root="@Url.Content("~/models/")"></canvas>
+                </div>
                 <div id="mannequinDebugPanel" class="well well-sm" style="margin-top:12px; display:none;">
                     <div class="sf-section-title" style="margin-top:0;">3D Debug Controls</div>
                     <div class="row">
@@ -305,7 +309,7 @@
     </div>
 
     <!-- Right: insights -->
-    <div class="col-lg-3 col-md-12">
+    <div class="col-lg-3 col-md-12 col-sm-12">
         <div class="sf-section">
             <div class="sf-section-title">Insights</div>
             <div class="panel panel-warning sf-panel-compact sf-panel-insight">
