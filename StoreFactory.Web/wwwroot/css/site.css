@@ -16,6 +16,21 @@ html, body {
     padding-right: 15px;
 }
 
+/* Use space better on large desktop screens while keeping readable line length */
+@media (min-width: 1200px) {
+    .body-content {
+        padding-left: 24px;
+        padding-right: 24px;
+    }
+}
+
+@media (min-width: 1600px) {
+    .body-content {
+        padding-left: 40px;
+        padding-right: 40px;
+    }
+}
+
 /* Carousel */
 .carousel-caption p {
     font-size: 20px;
@@ -102,6 +117,17 @@ html, body {
     justify-content: space-between;
     padding: 6px 0;
     border-bottom: 1px solid #eee;
+    gap: 12px;
+}
+
+/* Avoid overlapping / squashed result text in narrow panels */
+.sf-result-row > div:first-child {
+    min-width: 0;
+}
+
+.sf-result-label,
+.sf-result-caption {
+    word-break: break-word;
 }
 
 .sf-result-row:last-child {
