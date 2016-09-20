@@ -37,6 +37,35 @@ $(document).ready(function () {
     var lastRequestAt = 0;
     var minRequestIntervalMs = 25;
 
+    function setKpi(id, text, className) {
+        var $el = $(id);
+        if (!$el.length) return;
+        $el.text(text);
+        if (className) {
+            $el.removeClass('sf-status-ok sf-status-warn sf-status-bad').addClass(className);
+        }
+    }
+
+    function updateKpis(result) {
+        if (!result) return;
+        setKpi('#kpiLength', result.lengthFactor.toFixed(3));
+        setKpi('#kpiWidth', result.widthFactor.toFixed(3));
+        setKpi('#kpiSleeve', result.sleeveFactor.toFixed(3));
+        setKpi('#kpiConfidence', $('#resConfidence').text() || '-');
+
+        // Status derived from existing warning threshold
+        var status = 'OK';
+        var cls = 'sf-status-ok';
+        if (result.lengthFactor < 0.95 || result.widthFactor < 0.95) {
+            status = 'High shrinkage risk';
+            cls = 'sf-status-bad';
+        } else if (result.lengthFactor < 0.98 || result.widthFactor < 0.98) {
+            status = 'Watch';
+            cls = 'sf-status-warn';
+        }
+        setKpi('#kpiStatus', status, cls);
+    }
+
     function debounceCalculate() {
         if (pendingTimer) {
             clearTimeout(pendingTimer);
@@ -199,6 +228,15 @@ $(document).ready(function () {
 
     // Charts
     initChart();
+
+    // Tabs: charts/canvases need a redraw when shown
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function () {
+        if (myChart) {
+            myChart.resize();
+            myChart.update(0);
+        }
+        updateSurface(parseInt($material.val(), 10), $surfaceFactor.val(), { t: parseFloat($temp.val()), d: parseFloat($time.val()) });
+    });
 
     function initChart() {
         var chartCtx = document.getElementById("shrinkageChart");
@@ -655,6 +693,7 @@ $(document).ready(function () {
             $("#resWidth").text(result.widthFactor.toFixed(3));
             $("#resSleeve").text(result.sleeveFactor.toFixed(3));
             updateConfidenceBadge(result);
+            updateKpis(result);
 
             // Warning logic
             if (result.lengthFactor < 0.95 || result.widthFactor < 0.95) {

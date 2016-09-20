@@ -9,7 +9,7 @@
 </div>
 
 <div class="row">
-    <!-- Left: workflow controls + summary + tools -->
+    <!-- Left: Process settings -->
     <div class="col-lg-3 col-md-4 col-sm-12">
         <div class="sf-section">
             <div class="sf-section-title">Inputs</div>
@@ -48,101 +48,12 @@
         </div>
 
         <div class="sf-section">
-            <div class="sf-section-title">Recommend settings</div>
-            <div class="panel panel-success sf-panel-compact">
+            <div class="sf-section-title">Smart factory</div>
+            <div class="panel panel-default sf-panel-compact">
                 <div class="panel-body">
-                    <p class="sf-tab-desc" style="margin-bottom:10px;">Smart-factory mode: scan the existing data surface and propose feasible (T, D) settings.</p>
-
-                    <div class="form-group">
-                        <label>Mode</label>
-                        <select id="recMode" class="form-control">
-                            <option value="throughput" selected>Max throughput (min dwell)</option>
-                            <option value="energy">Min energy / stress (min temperature)</option>
-                            <option value="target">Hit target factors</option>
-                        </select>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-xs-4">
-                            <div class="form-group">
-                                <label>Min L</label>
-                                <input type="number" id="recMinLength" class="form-control" value="0.90" step="0.01" min="0.80" max="1.10" />
-                            </div>
-                        </div>
-                        <div class="col-xs-4">
-                            <div class="form-group">
-                                <label>Min W</label>
-                                <input type="number" id="recMinWidth" class="form-control" value="0.90" step="0.01" min="0.80" max="1.10" />
-                            </div>
-                        </div>
-                        <div class="col-xs-4">
-                            <div class="form-group">
-                                <label>Min S</label>
-                                <input type="number" id="recMinSleeve" class="form-control" value="0.90" step="0.01" min="0.80" max="1.10" />
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-xs-6">
-                            <div class="form-group">
-                                <label>Max Temp (&deg;C)</label>
-                                <input type="number" id="recMaxTemp" class="form-control" placeholder="(optional)" min="30" max="200" step="1" />
-                            </div>
-                        </div>
-                        <div class="col-xs-6">
-                            <div class="form-group">
-                                <label>Max Dwell (m/min)</label>
-                                <input type="number" id="recMaxDwell" class="form-control" placeholder="(optional)" min="1" max="20" step="0.5" />
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="recTargets" style="display:none;">
-                        <div class="row">
-                            <div class="col-xs-4">
-                                <div class="form-group">
-                                    <label>Target L</label>
-                                    <input type="number" id="recTargetLength" class="form-control" value="0.95" step="0.01" min="0.80" max="1.10" />
-                                </div>
-                            </div>
-                            <div class="col-xs-4">
-                                <div class="form-group">
-                                    <label>Target W</label>
-                                    <input type="number" id="recTargetWidth" class="form-control" value="0.95" step="0.01" min="0.80" max="1.10" />
-                                </div>
-                            </div>
-                            <div class="col-xs-4">
-                                <div class="form-group">
-                                    <label>Target S</label>
-                                    <input type="number" id="recTargetSleeve" class="form-control" value="0.95" step="0.01" min="0.80" max="1.10" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <button type="button" class="btn btn-success" id="btnRecommend">Recommend</button>
-                    <span id="recStatus" class="text-muted" style="margin-left:10px;"></span>
-
-                    <div id="recResults" style="margin-top:12px; display:none;">
-                        <div class="sf-section-title" style="margin-top:0;">Candidates</div>
-                        <div class="table-responsive">
-                            <table class="table table-condensed" style="margin-bottom:0;">
-                                <thead>
-                                    <tr>
-                                        <th>Label</th>
-                                        <th>T</th>
-                                        <th>D</th>
-                                        <th>L</th>
-                                        <th>W</th>
-                                        <th>S</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody id="recTable"></tbody>
-                            </table>
-                        </div>
-                    </div>
+                    <p class="sf-tab-desc" style="margin-bottom:10px;">Goal: pick feasible heat-setting parameters for quality and throughput.</p>
+                    <button type="button" class="btn btn-success" id="btnRecommend" style="margin-right:8px;">Recommend settings</button>
+                    <span id="recStatus" class="text-muted"></span>
                 </div>
             </div>
         </div>
@@ -187,8 +98,31 @@
 
     </div>
 
-    <!-- Middle: visualizer always visible -->
+    <!-- Middle: visualizer + KPI strip -->
     <div class="col-lg-6 col-md-8 col-sm-12">
+        <div class="sf-kpi-strip" role="status" aria-label="Current KPIs">
+            <div class="sf-kpi">
+                <div class="sf-kpi-label">Length</div>
+                <div class="sf-kpi-value" id="kpiLength">-</div>
+            </div>
+            <div class="sf-kpi">
+                <div class="sf-kpi-label">Width</div>
+                <div class="sf-kpi-value" id="kpiWidth">-</div>
+            </div>
+            <div class="sf-kpi">
+                <div class="sf-kpi-label">Sleeve</div>
+                <div class="sf-kpi-value" id="kpiSleeve">-</div>
+            </div>
+            <div class="sf-kpi">
+                <div class="sf-kpi-label">Confidence</div>
+                <div class="sf-kpi-value" id="kpiConfidence">-</div>
+            </div>
+            <div class="sf-kpi sf-kpi-wide">
+                <div class="sf-kpi-label">Status</div>
+                <div class="sf-kpi-value" id="kpiStatus">-</div>
+            </div>
+        </div>
+
         <div class="panel panel-default">
             <div class="panel-heading">
                 Visualizer
@@ -308,38 +242,145 @@
         </div>
     </div>
 
-    <!-- Right: insights -->
+    <!-- Right: Smart Factory decision support -->
     <div class="col-lg-3 col-md-12 col-sm-12">
         <div class="sf-section">
-            <div class="sf-section-title">Insights</div>
-            <div class="panel panel-warning sf-panel-compact sf-panel-insight">
-                <div class="panel-heading">Curve chart</div>
-                <div class="panel-body">
-                    <p class="sf-tab-desc">See how length factor changes across temperatures for the current dwell time.</p>
-                    <div class="sf-canvas-wrap">
-                        <canvas id="shrinkageChart" width="320" height="200"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="sf-section">
+            <div class="sf-section-title">Smart factory</div>
             <div class="panel panel-default sf-panel-compact sf-panel-insight">
-                <div class="panel-heading">2D contour (factor surface)</div>
                 <div class="panel-body">
-                    <p class="sf-tab-desc">Explore shrinkage levels across Temperature × Dwell Time.</p>
-                    <div class="form-group">
-                        <label>Factor</label>
-                        <select id="surfaceFactor" class="form-control">
-                            <option value="length" selected>Length</option>
-                            <option value="width">Width</option>
-                            <option value="sleeve">Sleeve</option>
-                        </select>
+                    <ul class="nav nav-pills nav-justified sf-insights-tabs" role="tablist">
+                        <li role="presentation" class="active"><a href="#sfTabRecommend" aria-controls="sfTabRecommend" role="tab" data-toggle="tab">Recommendation</a></li>
+                        <li role="presentation"><a href="#sfTabInsights" aria-controls="sfTabInsights" role="tab" data-toggle="tab">Insights</a></li>
+                        <li role="presentation"><a href="#sfTabConstraints" aria-controls="sfTabConstraints" role="tab" data-toggle="tab">Constraints</a></li>
+                    </ul>
+
+                    <div class="tab-content" style="margin-top:12px;">
+                        <div role="tabpanel" class="tab-pane active" id="sfTabRecommend">
+                            <div class="form-group">
+                                <label>Mode</label>
+                                <select id="recMode" class="form-control">
+                                    <option value="throughput" selected>Max throughput (min dwell)</option>
+                                    <option value="energy">Min energy / stress (min temperature)</option>
+                                    <option value="target">Hit target factors</option>
+                                </select>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-xs-4">
+                                    <div class="form-group">
+                                        <label>Min L</label>
+                                        <input type="number" id="recMinLength" class="form-control" value="0.90" step="0.01" min="0.80" max="1.10" />
+                                    </div>
+                                </div>
+                                <div class="col-xs-4">
+                                    <div class="form-group">
+                                        <label>Min W</label>
+                                        <input type="number" id="recMinWidth" class="form-control" value="0.90" step="0.01" min="0.80" max="1.10" />
+                                    </div>
+                                </div>
+                                <div class="col-xs-4">
+                                    <div class="form-group">
+                                        <label>Min S</label>
+                                        <input type="number" id="recMinSleeve" class="form-control" value="0.90" step="0.01" min="0.80" max="1.10" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-xs-6">
+                                    <div class="form-group">
+                                        <label>Max Temp (&deg;C)</label>
+                                        <input type="number" id="recMaxTemp" class="form-control" placeholder="(optional)" min="30" max="200" step="1" />
+                                    </div>
+                                </div>
+                                <div class="col-xs-6">
+                                    <div class="form-group">
+                                        <label>Max Dwell (m/min)</label>
+                                        <input type="number" id="recMaxDwell" class="form-control" placeholder="(optional)" min="1" max="20" step="0.5" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="recTargets" style="display:none;">
+                                <div class="row">
+                                    <div class="col-xs-4">
+                                        <div class="form-group">
+                                            <label>Target L</label>
+                                            <input type="number" id="recTargetLength" class="form-control" value="0.95" step="0.01" min="0.80" max="1.10" />
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-4">
+                                        <div class="form-group">
+                                            <label>Target W</label>
+                                            <input type="number" id="recTargetWidth" class="form-control" value="0.95" step="0.01" min="0.80" max="1.10" />
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-4">
+                                        <div class="form-group">
+                                            <label>Target S</label>
+                                            <input type="number" id="recTargetSleeve" class="form-control" value="0.95" step="0.01" min="0.80" max="1.10" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="recResults" style="margin-top:12px; display:none;">
+                                <div class="sf-section-title" style="margin-top:0;">Top candidates</div>
+                                <div class="table-responsive">
+                                    <table class="table table-condensed" style="margin-bottom:0;">
+                                        <thead>
+                                            <tr>
+                                                <th>Label</th>
+                                                <th>T</th>
+                                                <th>D</th>
+                                                <th>L</th>
+                                                <th>W</th>
+                                                <th>S</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="recTable"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div role="tabpanel" class="tab-pane" id="sfTabInsights">
+                            <p class="sf-tab-desc">Use these plots to explain and validate the recommendation.</p>
+                            <div class="sf-tabs-group">
+                                <div class="sf-tab-group-title">Curve</div>
+                                <div class="sf-canvas-wrap">
+                                    <canvas id="shrinkageChart" width="320" height="200"></canvas>
+                                </div>
+                            </div>
+
+                            <div class="sf-tabs-group" style="margin-top:12px;">
+                                <div class="sf-tab-group-title">Surface</div>
+                                <div class="form-group">
+                                    <label>Factor</label>
+                                    <select id="surfaceFactor" class="form-control">
+                                        <option value="length" selected>Length</option>
+                                        <option value="width">Width</option>
+                                        <option value="sleeve">Sleeve</option>
+                                    </select>
+                                </div>
+                                <div class="sf-canvas-wrap">
+                                    <canvas id="surfaceCanvas" width="320" height="220" style="border:1px solid #eee;"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div role="tabpanel" class="tab-pane" id="sfTabConstraints">
+                            <p class="sf-tab-desc">Define feasible bounds for quality.
+                            </p>
+                            <div class="form-group">
+                                <label>Min acceptable Length Factor</label>
+                                <input type="number" id="minLength" class="form-control" value="0.90" step="0.01" min="0.80" max="1.10" />
+                            </div>
+                            <div id="constraintStatus" class="alert alert-info" style="margin-top:10px;">Constraints not evaluated yet.</div>
+                            <div id="explainPanel" class="well well-sm" style="margin-top:10px;">Interpolation: <span id="interpMode">-</span></div>
+                        </div>
                     </div>
-                    <div class="sf-canvas-wrap">
-                        <canvas id="surfaceCanvas" width="320" height="220" style="border:1px solid #eee;"></canvas>
-                    </div>
-                    <p class="help-block" style="margin-top:8px;">Contour lines show factor levels over Temperature × Dwell Time. Marker shows current setting.</p>
                 </div>
             </div>
         </div>
@@ -347,7 +388,7 @@
 </div>
 
 <div class="sf-tooling">
-    <div class="sf-section-title">Tools</div>
+    <div class="sf-section-title">Operations</div>
     <div class="row">
         <div class="col-lg-4 col-md-6">
             <div class="panel panel-default sf-panel-compact">
@@ -399,21 +440,6 @@
                             <tbody id="expTable"></tbody>
                         </table>
                     </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-4 col-md-6">
-            <div class="panel panel-default sf-panel-compact">
-                <div class="panel-heading">Constraints & explainability</div>
-                <div class="panel-body">
-                    <p class="sf-tab-desc">Set a minimum acceptable factor and review interpolation logic.</p>
-                    <div class="form-group">
-                        <label>Min acceptable Length Factor</label>
-                        <input type="number" id="minLength" class="form-control" value="0.90" step="0.01" min="0.80" max="1.10" />
-                    </div>
-                    <div id="constraintStatus" class="alert alert-info" style="margin-top:10px;">Constraints not evaluated yet.</div>
-                    <div id="explainPanel" class="well well-sm" style="margin-top:10px;">Interpolation: <span id="interpMode">-</span></div>
                 </div>
             </div>
         </div>
