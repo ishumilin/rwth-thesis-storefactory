@@ -4,20 +4,26 @@
     ViewData["Title"] = "Simulator";
 }
 
-<div class="page-header" style="margin-top:0">
-    <h2 style="margin-top:0">Simulator <small>heat setting and shrinkage</small></h2>
+<div class="page-header sf-page-header">
+    <h2>Simulator <small>Explore heat-setting parameters and shrinkage behavior</small></h2>
+    <p class="text-muted">Adjust temperature and dwell time to see predicted fabric changes and smart-factory recommendations.</p>
 </div>
 
-<div class="row">
+<div class="row sf-main-row">
     <!-- Left: Process settings -->
     <div class="col-lg-3 col-md-4 col-sm-12">
         <div class="sf-section">
-            <div class="sf-section-title">Inputs</div>
+        <div class="sf-section-title">
+            Inputs
+            <span class="sf-help" data-toggle="tooltip" data-placement="right" title="Select a measured material and adjust temperature/dwell time to simulate shrinkage.">
+                ?
+            </span>
+        </div>
             <div class="panel panel-default sf-panel-compact">
                 <div class="panel-body">
                     <form id="simulatorForm">
                         <div class="form-group">
-                            <label>Material</label>
+                            <label>Material (measured dataset)</label>
                             <select asp-for="SelectedMaterialId" asp-items="Model.Materials" class="form-control"></select>
                         </div>
 
@@ -27,39 +33,33 @@
                                 <input asp-for="Temperature" type="range" min="30" max="200" step="1" class="form-control" />
                                 <span id="tempValue" class="sf-range-value">@Model.Temperature</span>
                             </div>
-                            <div class="sf-range-hint">Range 30&ndash;200 &deg;C</div>
+                            <div class="sf-range-hint">Range 30&ndash;200 &deg;C (higher heat increases shrinkage risk).</div>
                         </div>
 
                         <div class="form-group">
-                            <label>Dwell Time <span class="sf-unit">m/min</span></label>
+                            <label>Dwell Time <span class="sf-unit">min</span></label>
                             <div class="sf-range-row">
                                 <input asp-for="DwellTime" type="range" min="1" max="20" step="0.5" class="form-control" />
                                 <span id="timeValue" class="sf-range-value">@Model.DwellTime</span>
                             </div>
-                            <div class="sf-range-hint">Range 1&ndash;20 m/min</div>
+                            <div class="sf-range-hint">Range 1&ndash;20 minutes (longer dwell increases shrinkage).</div>
                         </div>
                     </form>
 
                     <div class="help-block" style="margin-bottom:0">
-                        Tip: <strong>1.00</strong> = no change, <strong>&lt; 1</strong> shrink, <strong>&gt; 1</strong> expand.
+                        Tip: <strong>1.00</strong> = no change, <strong>&lt; 1</strong> shrink, <strong>&gt; 1</strong> expansion.
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="sf-section">
-            <div class="sf-section-title">Smart factory</div>
-            <div class="panel panel-default sf-panel-compact">
-                <div class="panel-body">
-                    <p class="sf-tab-desc" style="margin-bottom:10px;">Goal: pick feasible heat-setting parameters for quality and throughput.</p>
-                    <button type="button" class="btn btn-success" id="btnRecommend" style="margin-right:8px;">Recommend settings</button>
-                    <span id="recStatus" class="text-muted"></span>
-                </div>
-            </div>
+        <div class="sf-section-title">
+            Results
+            <span class="sf-help" data-toggle="tooltip" data-placement="right" title="Shows predicted length/width/sleeve factors and confidence for the selected settings.">
+                ?
+            </span>
         </div>
-
-        <div class="sf-section">
-            <div class="sf-section-title">Results</div>
             <div class="panel panel-info sf-panel-compact">
                 <div class="panel-body" id="resultsPanel">
                     <div class="sf-result-row">
@@ -117,7 +117,7 @@
                 <div class="sf-kpi-label">Confidence</div>
                 <div class="sf-kpi-value" id="kpiConfidence">-</div>
             </div>
-            <div class="sf-kpi sf-kpi-wide">
+            <div class="sf-kpi">
                 <div class="sf-kpi-label">Status</div>
                 <div class="sf-kpi-value" id="kpiStatus">-</div>
             </div>
@@ -126,12 +126,16 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 Visualizer
+                <span class="sf-help" data-toggle="tooltip" data-placement="left" title="Switch between 2D outline and 3D mannequin views of the shrinkage result.">
+                    ?
+                </span>
                 <div class="btn-group btn-group-xs pull-right" role="group" aria-label="Visualizer mode">
                     <button type="button" class="btn btn-default" id="viewMode2d" data-mode="2d">2D</button>
                     <button type="button" class="btn btn-default" id="viewMode3d" data-mode="3d">3D</button>
                 </div>
             </div>
             <div class="panel-body">
+                <p class="text-muted" style="margin-bottom:10px;">2D shows the sweater outline; 3D shows the mannequin + T-shirt mesh.</p>
                 <div class="sf-canvas-wrap">
                     <canvas id="sweaterCanvas" width="520" height="480" style="border:1px solid #eee;"></canvas>
                 </div>
@@ -142,28 +146,130 @@
         </div>
     </div>
 
-    <!-- Right: Smart Factory decision support -->
     <div class="col-lg-3 col-md-12 col-sm-12">
         <div class="sf-section">
-            <div class="sf-section-title">Smart factory</div>
-            <div class="panel panel-default sf-panel-compact sf-panel-insight">
-                <div class="panel-body">
-                    <ul class="nav nav-pills nav-justified sf-insights-tabs" role="tablist">
-                        <li role="presentation" class="active"><a href="#sfTabRecommend" aria-controls="sfTabRecommend" role="tab" data-toggle="tab">Recommendation</a></li>
-                        <li role="presentation"><a href="#sfTabInsights" aria-controls="sfTabInsights" role="tab" data-toggle="tab">Insights</a></li>
-                        <li role="presentation"><a href="#sfTabConstraints" aria-controls="sfTabConstraints" role="tab" data-toggle="tab">Constraints</a></li>
-                    </ul>
+        <div class="sf-section-title">
+            Insights
+            <span class="sf-help" data-toggle="tooltip" data-placement="right" title="Quick visual analytics for the current material, temperature, and dwell time.">
+                ?
+            </span>
+        </div>
+            <div class="panel panel-default sf-panel-compact sf-insights-panel">
+                <div class="panel-body sf-insights-body">
+                    <div class="sf-tabs-group">
+                        <div class="sf-tab-group-title">
+                            Curve
+                            <span class="sf-help" data-toggle="tooltip" data-placement="right" title="Shows how length factor changes over temperature for the current dwell time.">
+                                ?
+                            </span>
+                        </div>
+                        <p class="sf-tab-desc">Length factor over temperature for the selected dwell time.</p>
+                        <div class="sf-canvas-wrap">
+                            <canvas id="shrinkageChart" width="320" height="240"></canvas>
+                        </div>
+                    </div>
 
-                    <div class="tab-content" style="margin-top:12px;">
-                        <div role="tabpanel" class="tab-pane active" id="sfTabRecommend">
+                    <div class="sf-tabs-group" style="margin-top:12px;">
+                        <div class="sf-tab-group-title">
+                            Surface
+                            <span class="sf-help" data-toggle="tooltip" data-placement="right" title="Contour map of shrinkage across temperature and dwell time for the selected factor.">
+                                ?
+                            </span>
+                        </div>
+                        <p class="sf-tab-desc">Contour map of shrinkage across temperature and dwell time.</p>
+                        <div class="form-group">
+                            <label>Factor</label>
+                            <select id="surfaceFactor" class="form-control">
+                                <option value="length" selected>Length</option>
+                                <option value="width">Width</option>
+                                <option value="sleeve">Sleeve</option>
+                            </select>
+                        </div>
+                        <div class="sf-canvas-wrap sf-surface-wrap">
+                            <canvas id="surfaceCanvas" width="360" height="260" style="border:1px solid #eee;"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="sf-insights-spacer"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="sf-tooling">
+    <div class="sf-section-title">
+        Smart factory
+        <span class="sf-help" data-toggle="tooltip" data-placement="right" title="Optimization and recommendation tools to balance quality and throughput.">
+            ?
+        </span>
+    </div>
+    <div class="panel panel-default sf-panel-compact">
+        <div class="panel-body">
+            <p class="sf-tab-desc" style="margin-bottom:12px;">Goal: pick feasible heat-setting parameters that balance quality and throughput.</p>
+            <div class="row sf-tooling-row">
+                <div class="col-lg-4 col-md-6">
+                    <div class="panel panel-default sf-panel-compact">
+                    <div class="panel-heading">
+                        Quality & Optimization (Length)
+                        <span class="sf-help" data-toggle="tooltip" data-placement="left" title="Set a target length factor and check if the current setting meets it.">
+                            ?
+                        </span>
+                    </div>
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <label>Length factor target</label>
+                                <input type="number" id="lengthTarget" class="form-control" value="0.92" step="0.01" min="0.80" max="1.10" />
+                                <p class="sf-range-hint">Example: 0.92 means 8% shrink in length.</p>
+                            </div>
+                            <div id="constraintStatus" class="alert alert-info" style="margin-top:10px;">Target not evaluated yet.</div>
+                            <div id="explainPanel" class="well well-sm" style="margin-top:10px;">Interpolation: <span id="interpMode">-</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="panel panel-default sf-panel-compact">
+                    <div class="panel-heading">
+                        Presets & Optimization
+                        <span class="sf-help" data-toggle="tooltip" data-placement="left" title="Quick presets for common operating points and a search for the best match.">
+                            ?
+                        </span>
+                    </div>
+                        <div class="panel-body">
+                            <p class="sf-tab-desc">Pick a preset for common operating points, then optimize around the length target.</p>
+                            <div class="btn-group" role="group" aria-label="Presets" style="margin-bottom:10px;">
+                                <button type="button" class="btn btn-default" id="presetLow">Low energy</button>
+                                <button type="button" class="btn btn-default" id="presetBalanced">Balanced</button>
+                                <button type="button" class="btn btn-default" id="presetMax">Max shrink</button>
+                                <button type="button" class="btn btn-default" id="presetSafe">Safe</button>
+                            </div>
+                            <div>
+                                <button type="button" class="btn btn-primary" id="btnOptimize">Find best settings</button>
+                                <span id="optStatus" class="text-muted" style="margin-left:10px;"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-12">
+                    <div class="panel panel-default sf-panel-compact">
+                    <div class="panel-heading">
+                        Recommendations
+                        <span class="sf-help" data-toggle="tooltip" data-placement="left" title="Generate feasible settings ranked by throughput, energy, or target accuracy.">
+                            ?
+                        </span>
+                    </div>
+                        <div class="panel-body">
                             <div class="form-group">
                                 <label>Mode</label>
                                 <select id="recMode" class="form-control">
                                     <option value="throughput" selected>Max throughput (min dwell)</option>
-                                    <option value="energy">Min energy / stress (min temperature)</option>
-                                    <option value="target">Hit target factors</option>
+                                    <option value="energy">Min energy/stress (min temperature)</option>
+                                    <option value="target">Hit target shrinkage factors</option>
                                 </select>
                             </div>
+
+                            <p class="sf-tab-desc">Recommendations are ranked by the selected mode, while respecting the minimum factors below.</p>
 
                             <div class="row">
                                 <div class="col-xs-4">
@@ -195,7 +301,7 @@
                                 </div>
                                 <div class="col-xs-6">
                                     <div class="form-group">
-                                        <label>Max Dwell (m/min)</label>
+                                        <label>Max Dwell (min)</label>
                                         <input type="number" id="recMaxDwell" class="form-control" placeholder="(optional)" min="1" max="20" step="0.5" />
                                     </div>
                                 </div>
@@ -243,42 +349,10 @@
                                     </table>
                                 </div>
                             </div>
-                        </div>
-
-                        <div role="tabpanel" class="tab-pane" id="sfTabInsights">
-                            <p class="sf-tab-desc">Use these plots to explain and validate the recommendation.</p>
-                            <div class="sf-tabs-group">
-                                <div class="sf-tab-group-title">Curve</div>
-                                <div class="sf-canvas-wrap">
-                                    <canvas id="shrinkageChart" width="320" height="200"></canvas>
-                                </div>
+                            <div style="margin-top:12px;">
+                                <button type="button" class="btn btn-success" id="btnRecommend" style="margin-right:8px;">Recommend settings</button>
+                                <span id="recStatus" class="text-muted"></span>
                             </div>
-
-                            <div class="sf-tabs-group" style="margin-top:12px;">
-                                <div class="sf-tab-group-title">Surface</div>
-                                <div class="form-group">
-                                    <label>Factor</label>
-                                    <select id="surfaceFactor" class="form-control">
-                                        <option value="length" selected>Length</option>
-                                        <option value="width">Width</option>
-                                        <option value="sleeve">Sleeve</option>
-                                    </select>
-                                </div>
-                                <div class="sf-canvas-wrap">
-                                    <canvas id="surfaceCanvas" width="320" height="220" style="border:1px solid #eee;"></canvas>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div role="tabpanel" class="tab-pane" id="sfTabConstraints">
-                            <p class="sf-tab-desc">Define feasible bounds for quality.
-                            </p>
-                            <div class="form-group">
-                                <label>Min acceptable Length Factor</label>
-                                <input type="number" id="minLength" class="form-control" value="0.90" step="0.01" min="0.80" max="1.10" />
-                            </div>
-                            <div id="constraintStatus" class="alert alert-info" style="margin-top:10px;">Constraints not evaluated yet.</div>
-                            <div id="explainPanel" class="well well-sm" style="margin-top:10px;">Interpolation: <span id="interpMode">-</span></div>
                         </div>
                     </div>
                 </div>
@@ -287,64 +361,6 @@
     </div>
 </div>
 
-<div class="sf-tooling">
-    <div class="sf-section-title">Operations</div>
-    <div class="row">
-        <div class="col-lg-4 col-md-6">
-            <div class="panel panel-default sf-panel-compact">
-                <div class="panel-heading">Presets & optimization</div>
-                <div class="panel-body">
-                    <p class="sf-tab-desc">Pick a preset or search for a target shrinkage factor.</p>
-                    <div class="btn-group" role="group" aria-label="Presets" style="margin-bottom:10px;">
-                        <button type="button" class="btn btn-default" id="presetLow">Low energy</button>
-                        <button type="button" class="btn btn-default" id="presetBalanced">Balanced</button>
-                        <button type="button" class="btn btn-default" id="presetMax">Max shrink</button>
-                        <button type="button" class="btn btn-default" id="presetSafe">Safe</button>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Target factor (Length)</label>
-                        <input type="number" id="targetFactor" class="form-control" value="0.92" step="0.01" min="0.80" max="1.10" />
-                    </div>
-                    <button type="button" class="btn btn-primary" id="btnOptimize">Find settings</button>
-                    <span id="optStatus" class="text-muted" style="margin-left:10px;"></span>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-4 col-md-6">
-            <div class="panel panel-default sf-panel-compact">
-                <div class="panel-heading">Experiment log</div>
-                <div class="panel-body">
-                    <p class="sf-tab-desc">Capture current runs and export the last results.</p>
-                    <div class="form-group">
-                        <label>Note</label>
-                        <input type="text" id="expNote" class="form-control" placeholder="optional note" />
-                    </div>
-                    <button type="button" class="btn btn-default" id="btnLog">Log current run</button>
-                    <button type="button" class="btn btn-default" id="btnExportCsv">Export CSV</button>
-
-                    <div class="table-responsive" style="margin-top:10px;">
-                        <table class="table table-condensed">
-                            <thead>
-                                <tr>
-                                    <th>Time</th>
-                                    <th>Mat</th>
-                                    <th>T</th>
-                                    <th>D</th>
-                                    <th>L</th>
-                                    <th>W</th>
-                                    <th>S</th>
-                                </tr>
-                            </thead>
-                            <tbody id="expTable"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
 @section Scripts {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>

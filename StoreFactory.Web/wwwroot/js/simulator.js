@@ -16,15 +16,16 @@ $(document).ready(function () {
     var $recTable = $("#recTable");
 
     var $surfaceFactor = $("#surfaceFactor");
-    var $minLength = $("#minLength");
+    var $lengthTarget = $("#lengthTarget");
     var $constraintStatus = $("#constraintStatus");
     var $interpMode = $("#interpMode");
 
     var $optStatus = $("#optStatus");
-    var $targetFactor = $("#targetFactor");
 
-    var $expNote = $("#expNote");
-    var $expTable = $("#expTable");
+    // Equal-height columns are handled via CSS Grid in site.css (wide screens).
+    // Keep this as a no-op to avoid fighting the CSS layout.
+    function equalizeMainColumns() { }
+
 
     var myChart;
     var surfaceCache = {}; // key: materialId|factor
@@ -92,7 +93,6 @@ $(document).ready(function () {
     $material.change(function () {
         surfaceCache = {};
         debounceCalculate();
-        refreshExperiments();
     });
 
     $surfaceFactor.change(function () {
@@ -106,7 +106,7 @@ $(document).ready(function () {
         });
     }
 
-    $minLength.on("input", function () {
+    $lengthTarget.on("input", function () {
         updateConstraints();
     });
 
@@ -139,7 +139,7 @@ $(document).ready(function () {
         $.post("/Simulator/Optimize", {
             materialId: parseInt($material.val(), 10),
             factor: "length",
-            target: parseFloat($targetFactor.val())
+            target: safeTarget()
         }).done(function (res) {
             $optStatus.text("Found T=" + res.temperature + ", D=" + res.dwellTime + " (score=" + res.score.toFixed(4) + ")");
             setControls(res.temperature, res.dwellTime);
@@ -148,95 +148,19 @@ $(document).ready(function () {
         });
     });
 
-    // Experiment log
-    $("#btnLog").click(function () {
-        if (!lastResult) return;
-        var entry = {
-            materialId: parseInt($material.val(), 10),
-            temperature: parseFloat($temp.val()),
-            dwellTime: parseFloat($time.val()),
-            lengthFactor: lastResult.lengthFactor,
-            widthFactor: lastResult.widthFactor,
-            sleeveFactor: lastResult.sleeveFactor,
-            note: $expNote.val() || ""
-        };
-
-        $.post("/Simulator/Log", entry).done(function () {
-            $expNote.val("");
-            refreshExperiments();
-        }).fail(function () {
-            alert("Log failed. Check server logs.");
-        });
-    });
-
-    $("#btnExportCsv").click(function () {
-        exportCsv();
-    });
-
-    function exportCsv() {
-        $.getJSON("/Simulator/Experiments", function (rows) {
-            var header = ["unixMs", "materialId", "temperature", "dwellTime", "lengthFactor", "widthFactor", "sleeveFactor", "note"].join(",");
-            var lines = [header];
-            for (var i = 0; i < rows.length; i++) {
-                var r = rows[i];
-                lines.push([
-                    r.unixMs,
-                    r.materialId,
-                    r.temperature,
-                    r.dwellTime,
-                    r.lengthFactor,
-                    r.widthFactor,
-                    r.sleeveFactor,
-                    '"' + String(r.note || "").replace(/"/g, '""') + '"'
-                ].join(","));
-            }
-
-            var csv = lines.join("\n");
-            var blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
-            var url = URL.createObjectURL(blob);
-            var a = document.createElement("a");
-            a.href = url;
-            a.download = "simulator_experiments.csv";
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        });
-    }
-
-    function refreshExperiments() {
-        $.getJSON("/Simulator/Experiments", function (rows) {
-            $expTable.empty();
-            // render last 15 entries
-            var start = Math.max(0, rows.length - 15);
-            for (var i = rows.length - 1; i >= start; i--) {
-                var r = rows[i];
-                var dt = new Date(r.unixMs);
-                var tr = "<tr>" +
-                    "<td>" + dt.toLocaleTimeString() + "</td>" +
-                    "<td>" + r.materialId + "</td>" +
-                    "<td>" + r.temperature + "</td>" +
-                    "<td>" + r.dwellTime + "</td>" +
-                    "<td>" + r.lengthFactor.toFixed(3) + "</td>" +
-                    "<td>" + r.widthFactor.toFixed(3) + "</td>" +
-                    "<td>" + r.sleeveFactor.toFixed(3) + "</td>" +
-                    "</tr>";
-                $expTable.append(tr);
-            }
-        });
-    }
 
     // Charts
     initChart();
 
-    // Tabs: charts/canvases need a redraw when shown
-    $('a[data-toggle="tab"]').on('shown.bs.tab', function () {
+    // Ensure charts are resized if layout changes (e.g., window resize)
+    $(window).on('resize', function () {
         if (myChart) {
             myChart.resize();
             myChart.update(0);
         }
-        updateSurface(parseInt($material.val(), 10), $surfaceFactor.val(), { t: parseFloat($temp.val()), d: parseFloat($time.val()) });
+        equalizeMainColumns();
     });
+
 
     function initChart() {
         var chartCtx = document.getElementById("shrinkageChart");
@@ -266,14 +190,32 @@ $(document).ready(function () {
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
                 animation: { duration: 0 },
                 tooltips: { enabled: true },
+                legend: {
+                    display: true,
+                    position: 'bottom',
+                    fullWidth: false,
+                    labels: {
+                        boxWidth: 10,
+                        padding: 10,
+                        fontSize: 10
+                    }
+                },
+                layout: {
+                    padding: { top: 4, right: 6, bottom: 0, left: 0 }
+                },
+                elements: {
+                    line: { tension: 0 },
+                    point: { radius: 0 }
+                },
                 scales: {
                     yAxes: [{
                         ticks: {
                             beginAtZero: false,
-                            suggestedMin: 0.80,
-                            suggestedMax: 1.10
+                            min: 0.90,
+                            max: 1.05
                         }
                     }],
                     xAxes: [{
@@ -357,7 +299,7 @@ $(document).ready(function () {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         // Layout
-        var padL = 35, padR = 10, padT = 10, padB = 25;
+        var padL = 35, padR = 80, padT = 10, padB = 32;
         var w = canvas.width - padL - padR;
         var h = canvas.height - padT - padB;
 
@@ -402,6 +344,17 @@ $(document).ready(function () {
         for (var k = 1; k <= n; k++) {
             levels.push(minV + (k / (n + 1)) * (maxV - minV));
         }
+
+        // Draw legend guide for contour levels
+        ctx.strokeStyle = "#ccc";
+        ctx.beginPath();
+        ctx.moveTo(padL + w + 18, padT);
+        ctx.lineTo(padL + w + 18, padT + h);
+        ctx.stroke();
+
+        ctx.fillStyle = "#666";
+        ctx.font = "10px Arial";
+        ctx.fillText("Factor", padL + w + 8, padT + h + 22);
 
         // Marching squares
         for (var li = 0; li < levels.length; li++) {
@@ -492,9 +445,16 @@ $(document).ready(function () {
             ctx.stroke();
 
             // Label each contour level
+            var legendY = padT + 14 + li * 16;
+            ctx.strokeStyle = contourColor(li, levels.length);
+            ctx.beginPath();
+            ctx.moveTo(padL + w + 14, legendY - 3);
+            ctx.lineTo(padL + w + 22, legendY - 3);
+            ctx.stroke();
+
             ctx.fillStyle = "#666";
-            ctx.font = "10px Arial";
-            ctx.fillText(level.toFixed(3), padL + w + 2, padT + 12 + li * 12);
+            ctx.font = "12px Arial";
+            ctx.fillText(level.toFixed(3), padL + w + 28, legendY);
         }
 
         // Axis labels
@@ -585,15 +545,23 @@ $(document).ready(function () {
         return "rgb(" + r + "," + g + "," + b + ")";
     }
 
+    function safeTarget() {
+        var raw = parseFloat($lengthTarget.val());
+        if (isNaN(raw)) {
+            return 0.92;
+        }
+        return raw;
+    }
+
     function updateConstraints() {
         if (!lastResult) return;
-        var minL = parseFloat($minLength.val());
-        if (lastResult.lengthFactor >= minL) {
+        var target = safeTarget();
+        if (lastResult.lengthFactor >= target) {
             $constraintStatus.removeClass("alert-danger").addClass("alert-success");
-            $constraintStatus.text("OK: length factor >= " + minL.toFixed(2));
+            $constraintStatus.text("OK: length factor >= " + target.toFixed(2));
         } else {
             $constraintStatus.removeClass("alert-success").addClass("alert-danger");
-            $constraintStatus.text("FAIL: length factor < " + minL.toFixed(2));
+            $constraintStatus.text("FAIL: length factor < " + target.toFixed(2));
         }
     }
 
@@ -726,6 +694,7 @@ $(document).ready(function () {
 
             // Explainability (simple)
             $interpMode.text("2D bilinear + fallbacks");
+            setTimeout(equalizeMainColumns, 50);
         }).always(function () {
             showLoading(false);
         });
@@ -743,6 +712,6 @@ $(document).ready(function () {
     }
 
     // Initial load
-    refreshExperiments();
     calculateAndUpdate();
+    setTimeout(equalizeMainColumns, 50);
 });

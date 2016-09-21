@@ -2,8 +2,9 @@
     ViewData["Title"] = "Analysis";
 }
 
-<div class="page-header" style="margin-top:0">
-    <h2 style="margin-top:0">Simulation Analysis <small>fabric behavior & quality</small></h2>
+<div class="page-header sf-page-header">
+    <h2>Simulation Analysis <small>Fabric behavior & quality</small></h2>
+    <p class="text-muted">Explore aggregated shrinkage trends from measured datasets.</p>
 </div>
 
 <p class="text-muted sf-analysis-intro">
@@ -11,6 +12,10 @@
     Current dataset: <strong>measurements.csv</strong> (real data).
     For parallel processing benchmarks, open <a asp-controller="Analysis" asp-action="Performance">Performance Analysis</a>.
     For interactive fabric behavior simulation, open <a asp-controller="Simulator" asp-action="Index">Simulator</a>.
+</p>
+
+<p class="text-muted">
+    Tip: hover any chart to see exact values. Legends are shown beneath the charts for readability.
 </p>
 
 <div class="panel panel-default sf-analysis-summary">
@@ -51,6 +56,7 @@
                 <div class="sf-canvas-wrap">
                     <canvas id="analysisTempChart" height="220"></canvas>
                 </div>
+                <p class="help-block">Average length factor by temperature bins for each material.</p>
             </div>
         </div>
     </div>
@@ -61,6 +67,7 @@
                 <div class="sf-canvas-wrap">
                     <canvas id="analysisDwellChart" height="220"></canvas>
                 </div>
+                <p class="help-block">Average length factor by dwell-time bins for each material.</p>
             </div>
         </div>
     </div>
@@ -74,6 +81,7 @@
                 <div class="sf-canvas-wrap">
                     <canvas id="analysisRadarChart" height="240"></canvas>
                 </div>
+                <p class="help-block">Mean length/width/sleeve factors per material.</p>
             </div>
         </div>
     </div>
@@ -84,6 +92,7 @@
                 <div class="sf-canvas-wrap">
                     <canvas id="analysisHistogramChart" height="220"></canvas>
                 </div>
+                <p class="help-block">Distribution of length factors across all samples.</p>
             </div>
         </div>
     </div>
@@ -97,7 +106,7 @@
                 <div class="sf-canvas-wrap">
                     <canvas id="analysisStabilityChart" height="240"></canvas>
                 </div>
-                <p class="help-block" style="margin-top:8px;">% of samples with length factor 0.95–1.05.</p>
+                <p class="help-block">% of samples with length factor in the safe band (0.95–1.05) by temperature/dwell bins.</p>
             </div>
         </div>
     </div>
@@ -108,6 +117,7 @@
                 <div class="sf-canvas-wrap">
                     <canvas id="analysisRiskChart" height="220"></canvas>
                 </div>
+                <p class="help-block">Share of samples below 0.95 length factor for each material.</p>
             </div>
         </div>
     </div>
