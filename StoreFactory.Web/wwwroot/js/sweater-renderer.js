@@ -61,12 +61,19 @@ var visualizer = (function() {
         ctx.clearRect(0, 0, w, h);
         
         var centerX = w / 2;
-        var topY = 50;
-        
+
         // Base Dimensions (Pixels)
         var bodyWidth = 200;
         var bodyLength = 300;
         var sleeveLength = 150;
+
+        // Compute a vertical offset so the sweater (plus a small top/bottom margin)
+        // sits centered within the canvas height.
+        var effectiveLength = bodyLength * shrinkage.lengthFactor;
+        var topMargin = 30;
+        var bottomMargin = 20;
+        var availableHeight = h - topMargin - bottomMargin;
+        var topY = topMargin + Math.max(0, (availableHeight - effectiveLength) / 2);
         
         // Draw Original (Ghost)
         ctx.strokeStyle = '#cccccc';
