@@ -161,15 +161,15 @@ $(document).ready(function () {
                     {
                         label: 'Length Factor (curve)',
                         data: [],
-                        borderColor: "rgba(75,192,192,1)",
+                        borderColor: "rgba(241,194,50,1)",
                         fill: false,
                         pointRadius: 0
                     },
                     {
                         label: 'Current setting',
                         data: [],
-                        borderColor: "rgba(255,99,132,1)",
-                        backgroundColor: "rgba(255,99,132,1)",
+                        borderColor: "rgba(52,58,68,1)",
+                        backgroundColor: "rgba(52,58,68,1)",
                         fill: false,
                         showLine: false,
                         pointRadius: 5
@@ -292,7 +292,7 @@ $(document).ready(function () {
         var h = canvas.height - padT - padB;
 
         // Axes
-        ctx.strokeStyle = "#aaa";
+        ctx.strokeStyle = "#b7bdc9";
         ctx.beginPath();
         ctx.moveTo(padL, padT);
         ctx.lineTo(padL, padT + h);
@@ -334,13 +334,13 @@ $(document).ready(function () {
         }
 
         // Draw legend guide for contour levels
-        ctx.strokeStyle = "#ccc";
+        ctx.strokeStyle = "#c6cbd6";
         ctx.beginPath();
         ctx.moveTo(padL + w + 18, padT);
         ctx.lineTo(padL + w + 18, padT + h);
         ctx.stroke();
 
-        ctx.fillStyle = "#666";
+        ctx.fillStyle = "#6b7486";
         ctx.font = "10px Arial";
         ctx.fillText("Factor", padL + w + 8, padT + h + 22);
 
@@ -440,13 +440,13 @@ $(document).ready(function () {
             ctx.lineTo(padL + w + 22, legendY - 3);
             ctx.stroke();
 
-            ctx.fillStyle = "#666";
+            ctx.fillStyle = "#6b7486";
             ctx.font = "12px Arial";
             ctx.fillText(level.toFixed(3), padL + w + 28, legendY);
         }
 
         // Axis labels
-        ctx.fillStyle = "#666";
+        ctx.fillStyle = "#6b7486";
         ctx.font = "10px Arial";
         ctx.fillText("T", padL + w - 8, padT + h + 18);
         ctx.fillText("D", 8, padT + 10);
@@ -455,7 +455,7 @@ $(document).ready(function () {
         if (marker) {
             var mx = padL + ((marker.t - 30) / (200 - 30)) * w;
             var my = padT + ((marker.d - 1) / (20 - 1)) * h;
-            ctx.fillStyle = "rgba(255,99,132,1)";
+            ctx.fillStyle = "rgba(241,194,50,1)";
             ctx.beginPath();
             ctx.arc(mx, my, 4, 0, Math.PI * 2);
             ctx.fill();
@@ -508,28 +508,28 @@ $(document).ready(function () {
                 if (t < 0) t = 0;
                 if (t > 1) t = 1;
 
-                // blue (high) -> red (low)
-                var r = Math.round(220 * (1 - t) + 30 * t);
-                var g = Math.round(80 + 60 * t);
-                var b = Math.round(220 * t + 40 * (1 - t));
+                // warm yellow -> red gradient to match theme
+                var r = Math.round(255 * (1 - t) + 220 * t);
+                var g = Math.round(210 * (1 - t) + 90 * t);
+                var b = Math.round(95 * (1 - t) + 70 * t);
 
                 var x0 = padL + (ti / (temps.length - 1)) * w;
                 var x1 = padL + ((ti + 1) / (temps.length - 1)) * w;
                 var y0 = padT + (di / (dwells.length - 1)) * h;
                 var y1 = padT + ((di + 1) / (dwells.length - 1)) * h;
 
-                ctx.fillStyle = 'rgba(' + r + ',' + g + ',' + b + ',0.12)';
+                ctx.fillStyle = 'rgba(' + r + ',' + g + ',' + b + ',0.18)';
                 ctx.fillRect(x0, y0, x1 - x0, y1 - y0);
             }
         }
     }
 
     function contourColor(i, total) {
-        // simple gradient (teal -> purple)
+        // warm gradient (dark -> yellow/red)
         var t = total <= 1 ? 0 : i / (total - 1);
-        var r = Math.round(50 + 120 * t);
-        var g = Math.round(160 - 100 * t);
-        var b = Math.round(180 + 60 * t);
+        var r = Math.round(70 + 180 * t);
+        var g = Math.round(60 + 90 * t);
+        var b = Math.round(60 + 20 * t);
         return "rgb(" + r + "," + g + "," + b + ")";
     }
 
