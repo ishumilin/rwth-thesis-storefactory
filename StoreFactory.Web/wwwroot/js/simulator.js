@@ -38,33 +38,21 @@ $(document).ready(function () {
     var lastRequestAt = 0;
     var minRequestIntervalMs = 25;
 
-    function setKpi(id, text, className) {
-        var $el = $(id);
+    function setStatus(text, className) {
+        var $el = $('#resStatus');
         if (!$el.length) return;
         $el.text(text);
+        $el.removeClass('sf-status-ok sf-status-warn sf-status-bad');
         if (className) {
-            $el.removeClass('sf-status-ok sf-status-warn sf-status-bad').addClass(className);
+            $el.addClass(className);
         }
     }
 
-    function updateKpis(result) {
-        if (!result) return;
-        setKpi('#kpiLength', result.lengthFactor.toFixed(3));
-        setKpi('#kpiWidth', result.widthFactor.toFixed(3));
-        setKpi('#kpiSleeve', result.sleeveFactor.toFixed(3));
-        setKpi('#kpiConfidence', $('#resConfidence').text() || '-');
-
-        // Status derived from existing warning threshold
-        var status = 'OK';
-        var cls = 'sf-status-ok';
-        if (result.lengthFactor < 0.95 || result.widthFactor < 0.95) {
-            status = 'High shrinkage risk';
-            cls = 'sf-status-bad';
-        } else if (result.lengthFactor < 0.98 || result.widthFactor < 0.98) {
-            status = 'Watch';
-            cls = 'sf-status-warn';
-        }
-        setKpi('#kpiStatus', status, cls);
+    function formatDelta(factor) {
+        if (typeof factor !== 'number' || isNaN(factor)) return '--';
+        var pct = (factor - 1) * 100;
+        var sign = pct > 0 ? '+' : '';
+        return sign + pct.toFixed(1) + '%';
     }
 
     function debounceCalculate() {
@@ -196,11 +184,11 @@ $(document).ready(function () {
                 legend: {
                     display: true,
                     position: 'bottom',
-                    fullWidth: false,
+                    fullWidth: true,
                     labels: {
-                        boxWidth: 10,
-                        padding: 10,
-                        fontSize: 10
+                        boxWidth: 8,
+                        padding: 8,
+                        fontSize: 9
                     }
                 },
                 layout: {
@@ -661,16 +649,22 @@ $(document).ready(function () {
             $("#resWidth").text(result.widthFactor.toFixed(3));
             $("#resSleeve").text(result.sleeveFactor.toFixed(3));
             updateConfidenceBadge(result);
-            updateKpis(result);
 
-            // Warning logic
+            $('#legendLength').text(formatDelta(result.lengthFactor));
+            $('#legendWidth').text(formatDelta(result.widthFactor));
+            $('#legendSleeve').text(formatDelta(result.sleeveFactor));
+
+            // Status derived from existing warning threshold
+            var status = 'OK';
+            var cls = 'sf-status-ok';
             if (result.lengthFactor < 0.95 || result.widthFactor < 0.95) {
-                if ($("#warningMsg").length === 0) {
-                    $("#resultsPanel").append('<div id="warningMsg" class="alert alert-danger" style="margin-top:10px">High Shrinkage Detected!</div>');
-                }
-            } else {
-                $("#warningMsg").remove();
+                status = 'High shrinkage risk';
+                cls = 'sf-status-bad';
+            } else if (result.lengthFactor < 0.98 || result.widthFactor < 0.98) {
+                status = 'Watch';
+                cls = 'sf-status-warn';
             }
+            setStatus(status, cls);
 
             // Visualizer
             if (typeof updateVisualizer === "function") {
@@ -714,4 +708,9 @@ $(document).ready(function () {
     // Initial load
     calculateAndUpdate();
     setTimeout(equalizeMainColumns, 50);
+
+    // Ensure legend values render even before the first response.
+    $('#legendLength').text(formatDelta(1));
+    $('#legendWidth').text(formatDelta(1));
+    $('#legendSleeve').text(formatDelta(1));
 });

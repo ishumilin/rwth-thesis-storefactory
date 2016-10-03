@@ -91,6 +91,13 @@
                         </div>
                         <div id="resConfidence" class="sf-result-value">-</div>
                     </div>
+                    <div class="sf-result-row">
+                        <div>
+                            <div class="sf-result-label">Status</div>
+                            <div class="sf-result-caption">Quality alert based on shrinkage thresholds</div>
+                        </div>
+                        <div id="resStatus" class="sf-result-value">Calculating...</div>
+                    </div>
                     <!-- warningMsg and loadingOverlay are injected here by simulator.js -->
                 </div>
             </div>
@@ -100,29 +107,6 @@
 
     <!-- Middle: visualizer + KPI strip -->
     <div class="col-lg-6 col-md-8 col-sm-12">
-        <div class="sf-kpi-strip" role="status" aria-label="Current KPIs">
-            <div class="sf-kpi">
-                <div class="sf-kpi-label">Length</div>
-                <div class="sf-kpi-value" id="kpiLength">-</div>
-            </div>
-            <div class="sf-kpi">
-                <div class="sf-kpi-label">Width</div>
-                <div class="sf-kpi-value" id="kpiWidth">-</div>
-            </div>
-            <div class="sf-kpi">
-                <div class="sf-kpi-label">Sleeve</div>
-                <div class="sf-kpi-value" id="kpiSleeve">-</div>
-            </div>
-            <div class="sf-kpi">
-                <div class="sf-kpi-label">Confidence</div>
-                <div class="sf-kpi-value" id="kpiConfidence">-</div>
-            </div>
-            <div class="sf-kpi">
-                <div class="sf-kpi-label">Status</div>
-                <div class="sf-kpi-value" id="kpiStatus">-</div>
-            </div>
-        </div>
-
         <div class="panel panel-default">
             <div class="panel-heading">
                 Visualizer
@@ -135,9 +119,31 @@
                 </div>
             </div>
             <div class="panel-body">
-                <p class="text-muted" style="margin-bottom:10px;">2D shows the sweater outline; 3D shows the mannequin + T-shirt mesh.</p>
                 <div class="sf-canvas-wrap sf-visualizer-wrap">
                     <canvas id="sweaterCanvas" width="520" height="480"></canvas>
+                </div>
+                <div class="sf-legend" aria-label="Shrinkage legend">
+                    <div class="sf-legend-item">
+                        <span class="sf-legend-badge">L</span>
+                        <div>
+                            <div class="sf-legend-label">Length</div>
+                            <div class="sf-legend-value" id="legendLength">--</div>
+                        </div>
+                    </div>
+                    <div class="sf-legend-item">
+                        <span class="sf-legend-badge">W</span>
+                        <div>
+                            <div class="sf-legend-label">Width</div>
+                            <div class="sf-legend-value" id="legendWidth">--</div>
+                        </div>
+                    </div>
+                    <div class="sf-legend-item">
+                        <span class="sf-legend-badge">S</span>
+                        <div>
+                            <div class="sf-legend-label">Sleeve</div>
+                            <div class="sf-legend-value" id="legendSleeve">--</div>
+                        </div>
+                    </div>
                 </div>
                 <div class="sf-canvas-wrap">
                     <canvas id="mannequinCanvas" width="520" height="480" style="display:none;" data-models-root="@Url.Content("~/models/")"></canvas>
@@ -165,7 +171,7 @@
                         </div>
                         <p class="sf-tab-desc">Length factor over temperature for the selected dwell time.</p>
                         <div class="sf-canvas-wrap">
-                            <canvas id="shrinkageChart" width="320" height="240"></canvas>
+                            <canvas id="shrinkageChart" width="320" height="260"></canvas>
                         </div>
                     </div>
 
