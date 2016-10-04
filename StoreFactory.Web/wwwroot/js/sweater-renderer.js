@@ -30,8 +30,13 @@ var visualizer = (function() {
         ctx.lineWidth = 2;
         drawShape(centerX, topY, bodyWidth, bodyLength, sleeveLength);
         
+        // Heat/tension coloring based on magnitude of shrink
+        var avg = (shrinkage.lengthFactor + shrinkage.widthFactor + shrinkage.sleeveFactor) / 3;
+        // shrink -> red, expand -> blue
+        var color = colorForFactor(avg);
+
         // Draw Shrunk
-        ctx.strokeStyle = '#d9534f'; // Bootstrap Danger Red
+        ctx.strokeStyle = color;
         ctx.setLineDash([]);
         ctx.lineWidth = 3;
         
@@ -42,6 +47,61 @@ var visualizer = (function() {
             bodyLength * shrinkage.lengthFactor, 
             sleeveLength * shrinkage.sleeveFactor
         );
+
+        // Before/After overlay annotations
+        ctx.setLineDash([]);
+        ctx.fillStyle = '#333';
+        ctx.font = '14px Arial';
+        ctx.fillText('ΔLength: ' + pct(shrinkage.lengthFactor) + '  ΔWidth: ' + pct(shrinkage.widthFactor) + '  ΔSleeve: ' + pct(shrinkage.sleeveFactor), 20, 25);
+
+        // Crosshair dims
+        drawDimensionMarkers(centerX, topY, bodyWidth, bodyLength, sleeveLength, shrinkage);
+    }
+
+    function pct(factor) {
+        var p = (factor - 1) * 100;
+        var sign = p > 0 ? '+' : '';
+        return sign + p.toFixed(1) + '%';
+    }
+
+    function colorForFactor(f) {
+        // Map 0.85..1.10 -> red..blue
+        var min = 0.85, max = 1.10;
+        var t = (f - min) / (max - min);
+        if (t < 0) t = 0;
+        if (t > 1) t = 1;
+        // shrink (low) => red; expand (high) => blue
+        var r = Math.round(220 * (1 - t) + 30 * t);
+        var g = Math.round(60 * (1 - t) + 120 * t);
+        var b = Math.round(50 * (1 - t) + 220 * t);
+        return 'rgb(' + r + ',' + g + ',' + b + ')';
+    }
+
+    function drawDimensionMarkers(cx, y, w0, l0, s0, sh) {
+        // Draw current width / length indicator lines
+        var w = w0 * sh.widthFactor;
+        var l = l0 * sh.lengthFactor;
+        var s = s0 * sh.sleeveFactor;
+
+        ctx.strokeStyle = 'rgba(0,0,0,0.15)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        // width line
+        ctx.moveTo(cx - w / 2, y + l + 15);
+        ctx.lineTo(cx + w / 2, y + l + 15);
+        // length line
+        ctx.moveTo(cx + w / 2 + 15, y);
+        ctx.lineTo(cx + w / 2 + 15, y + l);
+        // sleeve line
+        ctx.moveTo(cx + w / 2, y + 60);
+        ctx.lineTo(cx + w / 2 + s, y + 60);
+        ctx.stroke();
+
+        ctx.fillStyle = '#555';
+        ctx.font = '12px Arial';
+        ctx.fillText('W', cx, y + l + 30);
+        ctx.fillText('L', cx + w / 2 + 22, y + l / 2);
+        ctx.fillText('S', cx + w / 2 + s / 2, y + 52);
     }
 
     function drawShape(cx, y, w, l, s) {
@@ -84,3 +144,8 @@ var visualizer = (function() {
 $(document).ready(function() {
     visualizer.init();
 });
+
+// Hook used by simulator.js
+function updateVisualizer(result) {
+    visualizer.update(result);
+}
