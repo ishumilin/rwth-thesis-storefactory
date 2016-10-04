@@ -171,6 +171,35 @@ html, body {
     margin-top: 4px;
 }
 
+.sf-info-note {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #f3f5f9;
+    border: 1px solid var(--sf-border);
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-size: 12px;
+    color: var(--sf-dark-3);
+    margin-top: 10px;
+}
+
+.sf-info-note.sf-info-compact {
+    margin-top: 8px;
+    padding: 6px 10px;
+}
+
+.sf-info-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    font-weight: 600;
+    color: var(--sf-muted);
+    background: rgba(241, 194, 50, 0.18);
+    border-radius: 10px;
+    padding: 2px 6px;
+}
+
 .sf-unit {
     font-size: 12px;
     color: #6c6f73;
@@ -207,6 +236,17 @@ html, body {
 .sf-result-caption {
     font-size: 11px;
     color: #888;
+}
+
+.sf-status-note {
+    background: #eef2f8;
+    border: 1px solid var(--sf-border);
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--sf-dark-3);
+    margin-top: 10px;
 }
 
 .sf-result-value {
@@ -610,14 +650,18 @@ canvas {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
     border-radius: 50%;
     border: 1px solid rgba(241, 194, 50, 0.7);
     background: #fff;
     color: var(--sf-dark-3);
-    font-size: 11px;
+    font-size: 12px;
+    font-weight: 700;
     line-height: 1;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    box-sizing: border-box;
+    padding-top: 1px;
     cursor: help;
     user-select: none;
 }
@@ -872,9 +916,17 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .btn-success {
-    background-color: #2e7d32;
-    border-color: #2e7d32;
+    background-color: var(--sf-accent);
+    border-color: var(--sf-accent);
+    color: var(--sf-dark);
     font-weight: 600;
+}
+
+.btn-success:hover,
+.btn-success:focus {
+    background-color: var(--sf-accent-strong);
+    border-color: var(--sf-accent-strong);
+    color: var(--sf-dark);
 }
 
 .btn-default {
@@ -888,6 +940,11 @@ input[type="range"]::-moz-range-thumb {
 .btn-default:focus {
     background-color: #e9ecf3;
     border-color: var(--sf-border);
+}
+
+.btn {
+    border-radius: 6px;
+    letter-spacing: 0.2px;
 }
 
 .well {
