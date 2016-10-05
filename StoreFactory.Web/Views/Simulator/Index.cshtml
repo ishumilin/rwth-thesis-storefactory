@@ -1,0 +1,64 @@
+@model StoreFactory.Web.Models.SimulatorViewModel
+
+@{
+    ViewData["Title"] = "Simulator";
+}
+
+<h2>Simulator</h2>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">Controls</div>
+            <div class="panel-body">
+                <form id="simulatorForm">
+                    <div class="form-group">
+                        <label>Material</label>
+                        <select asp-for="SelectedMaterialId" asp-items="Model.Materials" class="form-control"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Temperature (&deg;C)</label>
+                        <input asp-for="Temperature" type="range" min="30" max="200" step="1" class="form-control" />
+                        <span id="tempValue">@Model.Temperature</span>
+                    </div>
+                    <div class="form-group">
+                        <label>Dwell Time (m/min)</label>
+                        <input asp-for="DwellTime" type="range" min="1" max="20" step="0.5" class="form-control" />
+                        <span id="timeValue">@Model.DwellTime</span>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="panel panel-info">
+            <div class="panel-heading">Results</div>
+            <div class="panel-body" id="resultsPanel">
+                <p><strong>Length Factor:</strong> <span id="resLength" class="text-success">-</span></p>
+                <p><strong>Width Factor:</strong> <span id="resWidth" class="text-success">-</span></p>
+                <p><strong>Sleeve Factor:</strong> <span id="resSleeve" class="text-success">-</span></p>
+            </div>
+        </div>
+
+        <div class="panel panel-warning">
+            <div class="panel-heading">Analytics</div>
+            <div class="panel-body">
+                <canvas id="shrinkageChart" width="300" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <div class="panel panel-default">
+            <div class="panel-heading">Visualizer</div>
+            <div class="panel-body">
+                <canvas id="sweaterCanvas" width="600" height="500" style="border:1px solid #eee;"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/lib/chartjs/dist/Chart.js"></script>
+    <script src="~/js/simulator.js"></script>
+    <script src="~/js/sweater-renderer.js"></script>
+}
