@@ -1,0 +1,97 @@
+@{
+    ViewData["Title"] = "Performance Analysis";
+}
+
+<div class="page-header" style="margin-top:0">
+    <h2 style="margin-top:0">Performance Analysis <small>parallel processing insights</small></h2>
+</div>
+
+<p class="text-muted sf-analysis-intro">
+    This page focuses on parallel processing performance using <strong>synthetic_large.csv</strong>.
+    For fabric behavior analytics, open <a asp-controller="Analysis" asp-action="Index">Simulation Analysis</a>.
+</p>
+
+<div class="panel panel-default sf-analysis-summary">
+    <div class="panel-heading">Performance summary</div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="sf-metric">
+                    <div class="sf-metric-label">Speedup</div>
+                    <div class="sf-metric-value" id="perfSpeedup">-</div>
+                    <div class="sf-metric-sub">
+                        single: <span id="perfSingle">-</span>s,
+                        parallel: <span id="perfParallel">-</span>s
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="sf-metric">
+                    <div class="sf-metric-label">Rows</div>
+                    <div class="sf-metric-value" id="perfRows">-</div>
+                    <div class="sf-metric-sub">
+                        workers: <span id="perfWorkers">-</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="sf-metric">
+                    <div class="sf-metric-label">Efficiency (peak)</div>
+                    <div class="sf-metric-value" id="perfEfficiency">-</div>
+                    <div class="sf-metric-sub">speedup / workers</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row sf-analysis-grid">
+    <div class="col-md-6">
+        <div class="panel panel-warning sf-analysis-panel">
+            <div class="panel-heading">Speedup vs. number of workers</div>
+            <div class="panel-body">
+                <div class="sf-canvas-wrap">
+                    <canvas id="perfSpeedupChart" height="220"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="panel panel-warning sf-analysis-panel">
+            <div class="panel-heading">Efficiency vs. workers</div>
+            <div class="panel-body">
+                <div class="sf-canvas-wrap">
+                    <canvas id="perfEfficiencyChart" height="220"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row sf-analysis-grid">
+    <div class="col-md-6">
+        <div class="panel panel-warning sf-analysis-panel">
+            <div class="panel-heading">Scaling time (seconds)</div>
+            <div class="panel-body">
+                <div class="sf-canvas-wrap">
+                    <canvas id="perfScalingChart" height="220"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="panel panel-warning sf-analysis-panel">
+            <div class="panel-heading">Parallel overhead estimate</div>
+            <div class="panel-body">
+                <div class="sf-canvas-wrap">
+                    <canvas id="perfOverheadChart" height="220"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+    <script src="~/js/performance.js"></script>
+}
