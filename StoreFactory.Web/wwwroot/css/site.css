@@ -34,6 +34,22 @@ body {
     font-weight: bold;
 }
 
+.sf-section {
+    margin-bottom: 12px;
+}
+
+.sf-section-title {
+    background: #f4f6f9;
+    border: 1px solid #e4e8ef;
+    border-bottom: none;
+    padding: 6px 10px;
+    font-weight: 600;
+    color: #2f3b52;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 12px;
+}
+
 .sf-panel-compact .panel-body {
     padding: 12px;
 }
@@ -55,6 +71,18 @@ body {
     color: #333;
 }
 
+.sf-range-hint {
+    font-size: 11px;
+    color: #888;
+    margin-top: 4px;
+}
+
+.sf-unit {
+    font-size: 12px;
+    color: #6c6f73;
+    font-weight: 400;
+}
+
 .sf-result-row {
     display: flex;
     align-items: baseline;
@@ -71,6 +99,11 @@ body {
     color: #555;
 }
 
+.sf-result-caption {
+    font-size: 11px;
+    color: #888;
+}
+
 .sf-result-value {
     font-size: 18px;
     line-height: 1;
@@ -80,10 +113,93 @@ body {
     margin-top: 10px;
 }
 
+.sf-tabs-group {
+    margin-bottom: 8px;
+}
+
+.sf-tab-group-title {
+    margin: 12px 0 6px;
+    font-size: 12px;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: #667084;
+    letter-spacing: 0.5px;
+}
+
+.sf-tab-desc {
+    font-size: 12px;
+    color: #666;
+    margin-top: 0;
+}
+
 .sf-panel-tab {
     border-top: none;
     border-top-left-radius: 0;
     border-top-right-radius: 0;
+}
+
+.sf-panel-insight .panel-heading {
+    background-color: #f7f9fb;
+}
+
+.sf-canvas-wrap {
+    width: 100%;
+    overflow: hidden;
+}
+
+.sf-canvas-wrap canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.sf-tooling {
+    margin-top: 16px;
+}
+
+.sf-analysis-intro {
+    margin-bottom: 20px;
+}
+
+.sf-analysis-summary .panel-body {
+    padding-top: 16px;
+    padding-bottom: 16px;
+}
+
+.sf-analysis-grid {
+    margin-bottom: 10px;
+}
+
+.sf-analysis-panel {
+    margin-bottom: 20px;
+}
+
+.sf-metric {
+    background: #f7f9fb;
+    border: 1px solid #e4e8ef;
+    padding: 12px 14px;
+    border-radius: 4px;
+}
+
+.sf-metric-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #667084;
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+
+.sf-metric-value {
+    font-size: 20px;
+    font-weight: 600;
+    color: #2f3b52;
+}
+
+.sf-metric-sub {
+    font-size: 12px;
+    color: #777;
+    margin-top: 4px;
 }
 
 #resultsPanel {
@@ -116,6 +232,31 @@ canvas#sweaterCanvas {
 .navbar-inverse {
     background-color: #222;
     border-color: #080808;
+}
+
+.navbar {
+    min-height: 56px;
+}
+
+.navbar-brand {
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    padding: 18px 15px;
+}
+
+.navbar-nav > li > a {
+    padding: 18px 15px;
+    font-size: 14px;
+}
+
+.navbar-inverse .navbar-nav > li > a,
+.navbar-inverse .navbar-brand {
+    color: #e6e6e6;
+}
+
+.navbar-inverse .navbar-nav > li > a:hover,
+.navbar-inverse .navbar-brand:hover {
+    color: #ffffff;
 }
 
 body {
