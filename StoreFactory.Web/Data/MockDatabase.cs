@@ -1,4 +1,7 @@
+using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 using StoreFactory.Web.Models;
 
 namespace StoreFactory.Web.Data
@@ -14,47 +17,71 @@ namespace StoreFactory.Web.Data
             // Seed Products
             Products.Add(new Product { Id = 1, Name = "Sweater V-Neck", Description = "Classic V-Neck Sweater" });
             Products.Add(new Product { Id = 2, Name = "Cardigan", Description = "Knitted Cardigan" });
-            
-            // Seed Materials
-            Materials.Add(new Material { Id = 1, Name = "Polyester (PES)", Description = "Synthetic Fiber" });
-            Materials.Add(new Material { Id = 2, Name = "Wool", Description = "Natural Fiber" });
 
-            // Seed Shrinkage Data
-            // We intentionally use *synthetic* data here to ensure both Temperature and DwellTime
-            // influence the result and the UI looks responsive. We don't aim to match thesis values.
-            SeedSyntheticShrinkageGrid(productId: 1, materialId: 1, baseFactor: 1.00, tempSensitivity: -0.0009, dwellSensitivity: -0.006);
-            SeedSyntheticShrinkageGrid(productId: 1, materialId: 2, baseFactor: 1.02, tempSensitivity: -0.0004, dwellSensitivity: -0.003);
+            LoadMeasurementsFromCsv();
         }
 
-        private static void SeedSyntheticShrinkageGrid(int productId, int materialId, double baseFactor, double tempSensitivity, double dwellSensitivity)
+        private static void LoadMeasurementsFromCsv()
         {
-            // Small 2D grid for bilinear interpolation
-            // Temperatures: 30, 100, 150, 200
-            // Dwell times: 1, 5, 10, 20
-            // Factor formula:
-            //   f = base + tempSensitivity*(T-30) + dwellSensitivity*(D-1)
-            // Clamp to a reasonable visual range.
-            var temps = new[] { 30.0, 100.0, 150.0, 200.0 };
-            var dwells = new[] { 1.0, 5.0, 10.0, 20.0 };
-
-            foreach (var t in temps)
+            // Load real measurement data (used for analysis) into the simulator.
+            // CSV columns: material,temperature_c,dwell_min,length_factor,width_factor,sleeve_factor
+            var csvPath = ResolveMeasurementsPath();
+            if (csvPath == null)
             {
-                foreach (var d in dwells)
-                {
-                    var f = baseFactor + tempSensitivity * (t - 30.0) + dwellSensitivity * (d - 1.0);
-                    f = Clamp(f, 0.85, 1.10);
+                // No CSV found; leave collections empty to avoid misleading synthetic data.
+                return;
+            }
 
-                    // Slightly different behavior per dimension to make the sweater visibly change
-                    var length = f;
-                    var width = Clamp(f + 0.01 * (materialId == 2 ? 1 : -1), 0.85, 1.10);
-                    var sleeve = Clamp(f + 0.005 * (dwellSensitivity < 0 ? -1 : 1), 0.85, 1.10);
+            var materialLookup = new Dictionary<string, Material>(StringComparer.OrdinalIgnoreCase);
+
+            using (var stream = File.OpenRead(csvPath))
+            using (var reader = new StreamReader(stream))
+            {
+                var header = reader.ReadLine();
+                if (string.IsNullOrWhiteSpace(header))
+                {
+                    return;
+                }
+
+                while (!reader.EndOfStream)
+                {
+                    var line = reader.ReadLine();
+                    if (string.IsNullOrWhiteSpace(line))
+                    {
+                        continue;
+                    }
+
+                    var parts = line.Split(',');
+                    if (parts.Length < 6)
+                    {
+                        continue;
+                    }
+
+                    var materialKey = parts[0].Trim();
+                    if (!materialLookup.TryGetValue(materialKey, out var material))
+                    {
+                        material = new Material
+                        {
+                            Id = Materials.Count + 1,
+                            Name = materialKey,
+                            Description = "Measured material"
+                        };
+                        Materials.Add(material);
+                        materialLookup[materialKey] = material;
+                    }
+
+                    if (!TryParseInvariant(parts[1], out var temperature)) continue;
+                    if (!TryParseInvariant(parts[2], out var dwell)) continue;
+                    if (!TryParseInvariant(parts[3], out var length)) continue;
+                    if (!TryParseInvariant(parts[4], out var width)) continue;
+                    if (!TryParseInvariant(parts[5], out var sleeve)) continue;
 
                     ShrinkageParameters.Add(new ShrinkageData
                     {
-                        ProductId = productId,
-                        MaterialId = materialId,
-                        Temperature = t,
-                        DwellTime = d,
+                        ProductId = 1,
+                        MaterialId = material.Id,
+                        Temperature = temperature,
+                        DwellTime = dwell,
                         LengthFactor = length,
                         WidthFactor = width,
                         SleeveFactor = sleeve
@@ -63,11 +90,32 @@ namespace StoreFactory.Web.Data
             }
         }
 
-        private static double Clamp(double value, double min, double max)
+        private static string ResolveMeasurementsPath()
         {
-            if (value < min) return min;
-            if (value > max) return max;
-            return value;
+            var baseDir = AppContext.BaseDirectory;
+            var candidates = new[]
+            {
+                Path.Combine(baseDir, "wwwroot", "data", "measurements.csv"),
+                Path.Combine(baseDir, "data", "measurements.csv"),
+                Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "data", "measurements.csv"),
+                Path.Combine(Directory.GetCurrentDirectory(), "..", "data", "measurements.csv"),
+                Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "data", "measurements.csv")
+            };
+
+            foreach (var candidate in candidates)
+            {
+                if (File.Exists(candidate))
+                {
+                    return candidate;
+                }
+            }
+
+            return null;
+        }
+
+        private static bool TryParseInvariant(string value, out double parsed)
+        {
+            return double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out parsed);
         }
     }
 }
