@@ -318,7 +318,13 @@ $(document).ready(function () {
 
         var temps = surface.temperatures;
         var dwells = surface.dwellTimes;
+        // Copy values so we can smooth without mutating the cached response.
         var values = surface.values;
+
+        // Light smoothing to reduce jagged, disconnected contour artifacts when the
+        // underlying grid is sparse/noisy (real measurement data + interpolation fallbacks).
+        // This keeps the overall shape but removes high-frequency noise.
+        values = smoothGrid(values, 1);
 
         // Determine contour levels
         var minV = 999, maxV = -999;
@@ -330,12 +336,16 @@ $(document).ready(function () {
             }
         }
 
+        // If the surface is almost constant, contouring becomes noisy/unhelpful.
+        // Still draw the heatmap and marker, but skip contour lines.
+        var range = maxV - minV;
+
         // subtle heatmap background (grid fill)
         drawHeatmap(ctx, padL, padT, w, h, temps, dwells, values, minV, maxV);
 
-        // 6 contour levels
+        // Fewer contour levels -> less clutter.
         var levels = [];
-        var n = 6;
+        var n = range < 0.002 ? 0 : 4;
         for (var k = 1; k <= n; k++) {
             levels.push(minV + (k / (n + 1)) * (maxV - minV));
         }
@@ -449,6 +459,42 @@ $(document).ready(function () {
             ctx.arc(mx, my, 4, 0, Math.PI * 2);
             ctx.fill();
         }
+    }
+
+    function smoothGrid(grid, passes) {
+        // grid[dIndex][tIndex]
+        if (!grid || !grid.length) return grid;
+        var h = grid.length;
+        var w = grid[0].length;
+
+        // Deep copy
+        var cur = [];
+        for (var y = 0; y < h; y++) {
+            cur[y] = grid[y].slice(0);
+        }
+
+        for (var p = 0; p < (passes || 1); p++) {
+            var next = [];
+            for (var yy = 0; yy < h; yy++) {
+                next[yy] = [];
+                for (var xx = 0; xx < w; xx++) {
+                    var sum = 0;
+                    var cnt = 0;
+                    for (var dy = -1; dy <= 1; dy++) {
+                        for (var dx = -1; dx <= 1; dx++) {
+                            var y2 = yy + dy;
+                            var x2 = xx + dx;
+                            if (y2 < 0 || y2 >= h || x2 < 0 || x2 >= w) continue;
+                            sum += cur[y2][x2];
+                            cnt++;
+                        }
+                    }
+                    next[yy][xx] = cnt ? sum / cnt : cur[yy][xx];
+                }
+            }
+            cur = next;
+        }
+        return cur;
     }
 
     function drawHeatmap(ctx, padL, padT, w, h, temps, dwells, values, minV, maxV) {
