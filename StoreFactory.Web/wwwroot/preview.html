@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simulator - StoreFactory Web Simulator (Preview)</title>
+
+    <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/site.css" />
+</head>
+<body>
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">StoreFactory</a>
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">About</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container body-content">
+        <h2>Simulator</h2>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">Controls</div>
+            <div class="panel-body">
+                <form id="simulatorForm">
+                    <div class="form-group">
+                        <label>Material</label>
+                        <select id="SelectedMaterialId" class="form-control">
+                            <option value="1">Polyester (PES)</option>
+                            <option value="2">Wool</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Temperature (&deg;C)</label>
+                        <input id="Temperature" type="range" min="30" max="200" step="1" class="form-control" value="180" />
+                        <span id="tempValue">180</span>
+                    </div>
+                    <div class="form-group">
+                        <label>Dwell Time (m/min)</label>
+                        <input id="DwellTime" type="range" min="1" max="20" step="0.5" class="form-control" value="2.5" />
+                        <span id="timeValue">2.5</span>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="panel panel-info">
+            <div class="panel-heading">Results</div>
+            <div class="panel-body" id="resultsPanel">
+                <p><strong>Length Factor:</strong> <span id="resLength" class="text-success">-</span></p>
+                <p><strong>Width Factor:</strong> <span id="resWidth" class="text-success">-</span></p>
+                <p><strong>Sleeve Factor:</strong> <span id="resSleeve" class="text-success">-</span></p>
+            </div>
+        </div>
+
+        <div class="panel panel-warning">
+            <div class="panel-heading">Analytics</div>
+            <div class="panel-body">
+                <canvas id="shrinkageChart" width="300" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <div class="panel panel-default">
+            <div class="panel-heading">Visualizer</div>
+            <div class="panel-body">
+                <canvas id="sweaterCanvas" width="600" height="500" style="border:1px solid #eee;"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+        <hr />
+        <footer>
+            <p>&copy; 2016 - StoreFactory Web Simulator</p>
+        </footer>
+    </div>
+
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+    
+    <!-- Inline JS for legacy preview:
+         Keep the normal jQuery $.post signature so simulator.js can chain .done/.always.
+         We return a Deferred promise-like object, and still support the optional callback.
+    -->
+    <script>
+        (function () {
+            var originalPost = $.post;
+            $.post = function (url, data, callback) {
+                var dfd = $.Deferred();
+
+                // Simulate Calculation Logic (from ShrinkageCalculator.cs)
+                var res = { lengthFactor: 1.0, widthFactor: 1.0, sleeveFactor: 1.0 };
+                var temp = parseFloat(data.temperature);
+
+                if (data.materialId == "1") { // PES
+                    res.lengthFactor = 1.0 - ((temp - 170) * 0.002);
+                    res.widthFactor = 1.0 - ((temp - 170) * 0.002);
+                    res.sleeveFactor = 1.0 - ((temp - 170) * 0.002);
+                } else { // Wool
+                    res.lengthFactor = 1.0 + ((temp - 30) * 0.001);
+                    res.widthFactor = 1.0 - ((temp - 30) * 0.003);
+                    res.sleeveFactor = 1.0 - ((temp - 30) * 0.001);
+                }
+
+                // Clamp
+                if (res.lengthFactor > 1.2) res.lengthFactor = 1.2;
+                if (res.lengthFactor < 0.8) res.lengthFactor = 0.8;
+                if (res.widthFactor > 1.2) res.widthFactor = 1.2;
+                if (res.widthFactor < 0.8) res.widthFactor = 0.8;
+
+                // async-ish
+                setTimeout(function () {
+                    try {
+                        if (typeof callback === "function") {
+                            callback(res);
+                        }
+                        dfd.resolve(res);
+                    } catch (e) {
+                        dfd.reject(e);
+                    }
+                }, 100);
+
+                return dfd.promise();
+            };
+        })();
+    </script>
+    <script src="js/simulator.js"></script>
+    <script src="js/sweater-renderer.js"></script>
+</body>
+</html>
