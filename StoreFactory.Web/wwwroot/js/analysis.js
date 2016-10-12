@@ -25,8 +25,10 @@ $(document).ready(function () {
                 data: { datasets: [] },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
                     animation: { duration: 0 },
                     tooltips: { enabled: true },
+                    legend: { display: true, position: 'bottom', labels: { boxWidth: 10 } },
                     scales: {
                         yAxes: [{ ticks: { beginAtZero: false, suggestedMin: 0.95, suggestedMax: 1.02 } }],
                         xAxes: [{ type: 'linear', position: 'bottom', ticks: { min: 30, max: 200, stepSize: 20 } }]
@@ -42,8 +44,10 @@ $(document).ready(function () {
                 data: { datasets: [] },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
                     animation: { duration: 0 },
                     tooltips: { enabled: true },
+                    legend: { display: true, position: 'bottom', labels: { boxWidth: 10 } },
                     scales: {
                         yAxes: [{ ticks: { beginAtZero: false, suggestedMin: 0.95, suggestedMax: 1.02 } }],
                         xAxes: [{ type: 'linear', position: 'bottom', ticks: { min: 1, max: 20, stepSize: 2 } }]
@@ -68,7 +72,9 @@ $(document).ready(function () {
                 },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
                     animation: { duration: 0 },
+                    legend: { display: false },
                     scales: { yAxes: [{ ticks: { beginAtZero: false, suggestedMin: 0.85, suggestedMax: 1.10 } }] }
                 }
             });
@@ -81,7 +87,9 @@ $(document).ready(function () {
                 data: { labels: [], datasets: [] },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
                     animation: { duration: 0 },
+                    legend: { position: 'bottom', labels: { boxWidth: 10 } },
                     scale: { ticks: { suggestedMin: 0.85, suggestedMax: 1.10 } }
                 }
             });
@@ -100,7 +108,9 @@ $(document).ready(function () {
                 }] },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
                     animation: { duration: 0 },
+                    legend: { display: false },
                     scales: { yAxes: [{ ticks: { beginAtZero: true } }] }
                 }
             });
@@ -113,7 +123,9 @@ $(document).ready(function () {
                 data: { labels: [], datasets: [] },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
                     animation: { duration: 0 },
+                    legend: { position: 'bottom', labels: { boxWidth: 10 } },
                     scales: {
                         yAxes: [{ ticks: { beginAtZero: true, suggestedMax: 100 } }],
                         xAxes: [{ stacked: true }]
@@ -135,7 +147,9 @@ $(document).ready(function () {
                 }] },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
                     animation: { duration: 0 },
+                    legend: { display: false },
                     scales: { yAxes: [{ ticks: { beginAtZero: true, suggestedMax: 100 } }] }
                 }
             });
@@ -156,7 +170,9 @@ $(document).ready(function () {
                 },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
                     animation: { duration: 0 },
+                    legend: { position: 'bottom', labels: { boxWidth: 10 } },
                     scales: {
                         yAxes: [{ ticks: { beginAtZero: true, suggestedMax: 8 } }],
                         xAxes: [{ type: 'linear', position: 'bottom', ticks: { beginAtZero: true, stepSize: 1 } }]

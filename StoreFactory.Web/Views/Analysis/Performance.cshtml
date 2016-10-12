@@ -2,13 +2,18 @@
     ViewData["Title"] = "Performance Analysis";
 }
 
-<div class="page-header" style="margin-top:0">
-    <h2 style="margin-top:0">Performance Analysis <small>parallel processing insights</small></h2>
+<div class="page-header sf-page-header">
+    <h2>Performance Analysis <small>Parallel processing insights</small></h2>
+    <p class="text-muted">Benchmark how parallel processing accelerates shrinkage computations.</p>
 </div>
 
 <p class="text-muted sf-analysis-intro">
     This page focuses on parallel processing performance using <strong>synthetic_large.csv</strong>.
     For fabric behavior analytics, open <a asp-controller="Analysis" asp-action="Index">Simulation Analysis</a>.
+</p>
+
+<p class="text-muted">
+    Tip: hover any chart to see exact values. Legends are shown beneath the charts for readability.
 </p>
 
 <div class="panel panel-default sf-analysis-summary">
@@ -53,6 +58,7 @@
                 <div class="sf-canvas-wrap">
                     <canvas id="perfSpeedupChart" height="220"></canvas>
                 </div>
+                <p class="help-block">Measured speedup as the number of workers increases.</p>
             </div>
         </div>
     </div>
@@ -63,6 +69,7 @@
                 <div class="sf-canvas-wrap">
                     <canvas id="perfEfficiencyChart" height="220"></canvas>
                 </div>
+                <p class="help-block">Efficiency is speedup divided by worker count.</p>
             </div>
         </div>
     </div>
@@ -76,6 +83,7 @@
                 <div class="sf-canvas-wrap">
                     <canvas id="perfScalingChart" height="220"></canvas>
                 </div>
+                <p class="help-block">Absolute runtime in seconds for each worker count.</p>
             </div>
         </div>
     </div>
@@ -86,6 +94,7 @@
                 <div class="sf-canvas-wrap">
                     <canvas id="perfOverheadChart" height="220"></canvas>
                 </div>
+                <p class="help-block">Estimated overhead beyond ideal linear scaling.</p>
             </div>
         </div>
     </div>

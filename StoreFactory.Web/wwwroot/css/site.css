@@ -60,6 +60,8 @@ html, body {
 /* Simulator Styles */
 .panel-heading {
     font-weight: bold;
+    position: relative;
+    padding-right: 28px; /* reserve space for tooltip icon */
 }
 
 .sf-section {
@@ -77,12 +79,15 @@ html, body {
     background: #f4f6f9;
     border: 1px solid #e4e8ef;
     border-bottom: none;
-    padding: 6px 10px;
+    padding: 6px 28px 6px 10px; /* right padding leaves room for the ? icon */
     font-weight: 600;
     color: #2f3b52;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     font-size: 12px;
+
+    /* Allow the help icon to be positioned on the far right of the bar */
+    position: relative;
 }
 
 .sf-panel-compact .panel-body {
@@ -170,6 +175,8 @@ html, body {
     font-weight: 600;
     color: #667084;
     letter-spacing: 0.5px;
+    position: relative;
+    padding-right: 28px; /* reserve space for tooltip icon */
 }
 
 .sf-tab-desc {
@@ -186,6 +193,31 @@ html, body {
 
 .sf-panel-insight .panel-heading {
     background-color: #f7f9fb;
+}
+
+/* Smart factory tab buttons: prevent overlap on narrow panels */
+.sf-insights-tabs > li > a {
+    padding: 8px 6px;
+    font-size: 12px;
+    white-space: normal;
+    text-align: center;
+}
+
+.sf-insights-tabs > li {
+    float: none;
+    display: table-cell;
+    width: 1%;
+}
+
+@media (max-width: 991px) {
+    .sf-insights-tabs {
+        display: flex;
+        flex-wrap: wrap;
+    }
+    .sf-insights-tabs > li {
+        flex: 1 1 33%;
+        display: block;
+    }
 }
 
 /* KPI strip above visualizer */
@@ -241,6 +273,26 @@ html, body {
     height: auto;
 }
 
+.sf-surface-wrap {
+    /* Do not force extra vertical space inside Insights */
+    min-height: 0;
+}
+
+.sf-surface-wrap canvas {
+    min-height: 0;
+}
+
+/* Chart canvases should fill their container to make room for legends. */
+.sf-canvas-wrap canvas,
+.sf-analysis-panel canvas {
+    min-height: 220px;
+}
+
+/* In the Simulator Insights sidebar, avoid forcing extra height on canvases. */
+.sf-insights-panel .sf-canvas-wrap canvas {
+    min-height: 0;
+}
+
 /* Canvases outside .sf-canvas-wrap (e.g., visualizer) */
 canvas {
     max-width: 100%;
@@ -260,6 +312,10 @@ canvas {
     .sf-result-value {
         font-size: 16px;
     }
+
+    .sf-surface-wrap {
+        min-height: 240px;
+    }
 }
 
 /* Visualizer canvases: keep within column width and avoid fixed pixel overflow */
@@ -271,6 +327,39 @@ canvas {
 
 .sf-tooling {
     margin-top: 16px;
+}
+
+/* Smart factory column height alignment */
+.sf-tooling-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+}
+
+.sf-tooling-row > [class*="col-"] {
+    display: flex;
+    flex-direction: column;
+}
+
+.sf-tooling-row > [class*="col-"] > .panel {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.sf-tooling-row > [class*="col-"] > .panel > .panel-body {
+    flex: 1 1 auto;
+}
+
+/* Preset buttons: allow wrapping and spacing to avoid overlap */
+.sf-tooling .btn-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.sf-tooling .btn-group > .btn {
+    float: none;
 }
 
 .sf-analysis-intro {
@@ -288,6 +377,144 @@ canvas {
 
 .sf-analysis-panel {
     margin-bottom: 20px;
+}
+
+.sf-analysis-panel .panel-body,
+.sf-analysis-summary .panel-body {
+    padding-bottom: 18px;
+}
+
+.sf-analysis-panel .help-block {
+    margin-top: 8px;
+    margin-bottom: 0;
+}
+
+.sf-analysis-panel .sf-canvas-wrap {
+    min-height: 260px;
+}
+
+/* Simulator 3-column layout */
+.sf-main-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+}
+
+/* Override Bootstrap row clearfix pseudo-elements so flex sizing behaves predictably. */
+.sf-main-row::before,
+.sf-main-row::after {
+    content: none;
+    display: none;
+}
+
+/* Keep Bootstrap column widths, but allow equal-height behavior */
+.sf-main-row > [class*="col-"] {
+    display: flex;
+    flex-direction: column;
+    align-self: stretch;
+    float: none;
+}
+
+/* Use CSS grid on wide screens to guarantee equal-height columns */
+@media (min-width: 1200px) {
+    .sf-main-row {
+        display: grid;
+        grid-template-columns: 3fr 6fr 3fr;
+        grid-column-gap: 20px;
+        align-items: stretch; /* equal-height columns */
+    }
+
+    /* Each direct child (the 3 columns) stretches to the tallest one */
+    .sf-main-row > [class*="col-"] {
+        width: auto;
+        max-width: none;
+        float: none;
+        align-self: stretch;
+
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    /* Left and right columns contain multiple .sf-section blocks.
+       Let them distribute extra space so the column becomes full height. */
+    .sf-main-row > [class*="col-"] > .sf-section {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+    }
+
+    .sf-main-row > [class*="col-"] > .sf-section > .panel {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+    }
+
+    .sf-main-row > [class*="col-"] > .sf-section > .panel > .panel-body {
+        flex: 0 0 auto; /* don't artificially stretch body content */
+    }
+}
+
+/* Make left/middle/right columns match height (row is flex),
+   and allow inner sections/panels to stretch to fill the column height. */
+/* Do NOT stretch panels/sections to fill column height.
+   This was causing "extra space" inside Inputs/Results/Insights panels. */
+.sf-main-row > [class*="col-"] > .sf-section {
+    flex: 0 0 auto;
+    display: block;
+}
+
+.sf-main-row > [class*="col-"] > .sf-section > .panel {
+    flex: 0 0 auto;
+    display: block;
+}
+
+.sf-main-row > [class*="col-"] > .sf-section > .panel > .panel-body {
+    flex: 0 0 auto;
+}
+
+/* Insights: do not force extra spacer height (avoid unnecessary bottom whitespace) */
+.sf-insights-panel .panel-body {
+    display: block;
+}
+
+.sf-insights-spacer {
+    display: none;
+}
+
+/* Help tooltip icon */
+.sf-help {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 1px solid #c9d2e3;
+    background: #fff;
+    color: #4a5a78;
+    font-size: 11px;
+    line-height: 1;
+    cursor: help;
+    user-select: none;
+}
+.sf-help:hover {
+    background: #f4f6f9;
+    border-color: #9fb0cc;
+}
+
+
+@media (min-width: 992px) {
+    .sf-analysis-panel .sf-canvas-wrap {
+        min-height: 300px;
+    }
 }
 
 .sf-metric {
@@ -344,6 +571,17 @@ canvas#sweaterCanvas {
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
+/* Improve spacing for tab content to avoid cramped layout */
+.tab-content {
+    padding-bottom: 6px;
+}
+
+/* Reduce table header wrapping in recommendation/experiment tables */
+.table th,
+.table td {
+    white-space: nowrap;
+}
+
 /* Polish */
 .navbar-inverse {
     background-color: #222;
@@ -381,4 +619,19 @@ body {
 
 h2 {
     color: #333;
+}
+
+.sf-page-header {
+    margin-top: 12px;
+}
+
+.sf-page-header h2 {
+    margin-top: 0;
+    margin-bottom: 6px;
+}
+
+.sf-page-header small {
+    display: block;
+    margin-top: 4px;
+    color: #667084;
 }

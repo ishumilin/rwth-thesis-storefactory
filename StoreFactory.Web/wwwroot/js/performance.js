@@ -26,7 +26,9 @@ $(document).ready(function () {
                 }] },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
                     animation: { duration: 0 },
+                    legend: { position: 'bottom', labels: { boxWidth: 10 } },
                     scales: {
                         yAxes: [{ ticks: { beginAtZero: true } }],
                         xAxes: [{ type: 'linear', position: 'bottom', ticks: { beginAtZero: true, stepSize: 1 } }]
@@ -48,7 +50,9 @@ $(document).ready(function () {
                 }] },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
                     animation: { duration: 0 },
+                    legend: { position: 'bottom', labels: { boxWidth: 10 } },
                     scales: {
                         yAxes: [{ ticks: { beginAtZero: true, suggestedMax: 1 } }],
                         xAxes: [{ type: 'linear', position: 'bottom', ticks: { beginAtZero: true, stepSize: 1 } }]
@@ -70,7 +74,9 @@ $(document).ready(function () {
                 }] },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
                     animation: { duration: 0 },
+                    legend: { position: 'bottom', labels: { boxWidth: 10 } },
                     scales: {
                         yAxes: [{ ticks: { beginAtZero: true } }],
                         xAxes: [{ type: 'linear', position: 'bottom', ticks: { beginAtZero: true, stepSize: 1 } }]
@@ -92,7 +98,9 @@ $(document).ready(function () {
                 }] },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
                     animation: { duration: 0 },
+                    legend: { display: false },
                     scales: { yAxes: [{ ticks: { beginAtZero: true } }] }
                 }
             });
