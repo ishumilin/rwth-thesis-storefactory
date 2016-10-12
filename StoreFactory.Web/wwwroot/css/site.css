@@ -31,6 +31,13 @@ html, body {
     }
 }
 
+/* Container-fluid makes pages very wide; keep content readable with a max width */
+.body-content {
+    max-width: 1440px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 /* Carousel */
 .carousel-caption p {
     font-size: 20px;
