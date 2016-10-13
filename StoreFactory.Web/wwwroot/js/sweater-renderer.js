@@ -99,12 +99,6 @@ var visualizer = (function() {
             sleeveLength * shrinkage.sleeveFactor
         );
 
-        // Before/After overlay annotations
-        ctx.setLineDash([]);
-        ctx.fillStyle = '#333';
-        ctx.font = '14px Arial';
-        ctx.fillText('ΔLength: ' + pct(shrinkage.lengthFactor) + '  ΔWidth: ' + pct(shrinkage.widthFactor) + '  ΔSleeve: ' + pct(shrinkage.sleeveFactor), 20, 25);
-
         // Crosshair dims
         drawDimensionMarkers(centerX, topY, bodyWidth, bodyLength, sleeveLength, shrinkage);
     }
