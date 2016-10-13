@@ -325,6 +325,22 @@ canvas {
     height: auto;
 }
 
+/* 2D visualizer centering */
+.sf-visualizer-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 0;
+}
+
+.sf-visualizer-wrap #sweaterCanvas {
+    width: 520px;
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto;
+    display: block;
+}
+
 .sf-tooling {
     margin-top: 16px;
 }
@@ -567,8 +583,8 @@ canvas {
 }
 
 canvas#sweaterCanvas {
-    background-color: #ffffff;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    background-color: transparent;
+    box-shadow: none;
 }
 
 /* Improve spacing for tab content to avoid cramped layout */
