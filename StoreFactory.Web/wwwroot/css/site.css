@@ -81,6 +81,41 @@ html, body {
     padding-right: 28px; /* reserve space for tooltip icon */
 }
 
+.sf-panel-heading-inline {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.sf-panel-heading-inline .sf-heading-left {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.sf-panel-heading-inline .btn-group {
+    margin-left: auto;
+    padding-left: 12px;
+}
+
+.sf-panel-heading-center {
+    justify-content: center;
+    position: relative;
+}
+
+.sf-panel-heading-center .sf-heading-left {
+    margin-right: auto;
+}
+
+.sf-panel-heading-center .btn-group {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    padding-left: 0;
+    margin-left: 0;
+}
+
 .sf-section {
     margin-bottom: 12px;
 }
