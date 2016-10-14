@@ -99,17 +99,21 @@ $(document).ready(function () {
     });
 
     // Presets
-    $("#presetLow").click(function () {
-        setControls(80, 3);
-    });
-    $("#presetBalanced").click(function () {
+    $('#presetApply').on('click', function () {
+        var preset = String($('#presetSelect').val() || 'balanced');
+        if (preset === 'low') {
+            setControls(80, 3);
+            return;
+        }
+        if (preset === 'max') {
+            setControls(200, 20);
+            return;
+        }
+        if (preset === 'safe') {
+            setControls(110, 2);
+            return;
+        }
         setControls(130, 8);
-    });
-    $("#presetMax").click(function () {
-        setControls(200, 20);
-    });
-    $("#presetSafe").click(function () {
-        setControls(110, 2);
     });
 
     function setControls(t, d) {
