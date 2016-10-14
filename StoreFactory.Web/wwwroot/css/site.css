@@ -646,24 +646,19 @@ canvas {
     top: 50%;
     right: 10px;
     transform: translateY(-50%);
-
     display: inline-flex;
     align-items: center;
     justify-content: center;
     width: 18px;
     height: 18px;
     border-radius: 50%;
-    border: 1px solid rgba(241, 194, 50, 0.7);
-    background: #fff;
-    color: var(--sf-dark-3);
-    font-size: 12px;
-    font-weight: 700;
-    line-height: 1;
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    box-sizing: border-box;
-    padding-top: 1px;
     cursor: help;
     user-select: none;
+}
+.sf-help-icon {
+    width: 18px;
+    height: 18px;
+    display: block;
 }
 .sf-help:hover {
     background: rgba(241, 194, 50, 0.15);
