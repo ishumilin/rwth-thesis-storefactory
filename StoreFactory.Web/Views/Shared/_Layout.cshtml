@@ -13,8 +13,8 @@
         var currentController = (ViewContext.RouteData.Values["controller"] as string ?? "").ToLowerInvariant();
         var currentAction = (ViewContext.RouteData.Values["action"] as string ?? "").ToLowerInvariant();
     }
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
+    <nav class="navbar navbar-inverse navbar-fixed-top sf-top-nav">
+        <div class="container-fluid">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
                     <span class="sr-only">Toggle navigation</span>
@@ -24,7 +24,7 @@
                 </button>
                 <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">StoreFactory</a>
             </div>
-            <div class="navbar-collapse collapse">
+            <div class="navbar-collapse collapse sf-nav-links">
                 <ul class="nav navbar-nav">
                     <li class="@(currentController == "home" && currentAction == "index" ? "active" : "")"><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
                     <li class="@(currentController == "simulator" ? "active" : "")"><a asp-area="" asp-controller="Simulator" asp-action="Index">Simulator</a></li>
