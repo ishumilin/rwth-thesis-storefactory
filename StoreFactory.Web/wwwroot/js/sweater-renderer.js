@@ -1,28 +1,79 @@
 // Sweater Visualizer using HTML5 Canvas
 var visualizer = (function() {
     var canvas, ctx;
+    var dpr = 1;
     
     function init() {
         canvas = document.getElementById('sweaterCanvas');
         if (canvas) {
+            // Use DPR-aware scaling so the 2D view stays crisp when the canvas
+            // is responsive (CSS width: 100%).
             ctx = canvas.getContext('2d');
+            setupHiDpiCanvas();
+
+            // Recompute backing store on resize.
+            window.addEventListener('resize', function () {
+                setupHiDpiCanvas();
+                drawSweater(lastShrinkage || { lengthFactor: 1, widthFactor: 1, sleeveFactor: 1 });
+            });
             // Initial draw
             drawSweater({ lengthFactor: 1, widthFactor: 1, sleeveFactor: 1 });
         }
     }
+
+    var lastShrinkage = null;
+
+    function setupHiDpiCanvas() {
+        if (!canvas || !ctx) return;
+
+        dpr = window.devicePixelRatio || 1;
+
+        // Desired CSS display size
+        var cssWidth = canvas.clientWidth || canvas.width;
+        var cssHeight = canvas.clientHeight || canvas.height;
+
+        // If height collapses to 0 (e.g., display:none), fall back to attribute.
+        if (!cssHeight || cssHeight < 10) {
+            // Maintain aspect ratio from attributes
+            var aspect = canvas.height / canvas.width;
+            cssHeight = Math.round(cssWidth * aspect);
+        }
+
+        // Set the backing store size in actual pixels
+        canvas.width = Math.round(cssWidth * dpr);
+        canvas.height = Math.round(cssHeight * dpr);
+
+        // Normalize drawing units to CSS pixels
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        // Improve line quality
+        ctx.imageSmoothingEnabled = true;
+    }
     
     function drawSweater(shrinkage) {
         if (!ctx) return;
+
+        lastShrinkage = shrinkage;
         
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // canvas.width/height are in device pixels; drawing is in CSS pixels
+        var w = (canvas.width / dpr);
+        var h = (canvas.height / dpr);
+        ctx.clearRect(0, 0, w, h);
         
-        var centerX = canvas.width / 2;
-        var topY = 50;
-        
+        var centerX = w / 2;
+
         // Base Dimensions (Pixels)
         var bodyWidth = 200;
         var bodyLength = 300;
         var sleeveLength = 150;
+
+        // Compute a vertical offset so the sweater (plus a small top/bottom margin)
+        // sits centered within the canvas height.
+        var effectiveLength = bodyLength * shrinkage.lengthFactor;
+        var topMargin = 30;
+        var bottomMargin = 20;
+        var availableHeight = h - topMargin - bottomMargin;
+        var topY = topMargin + Math.max(0, (availableHeight - effectiveLength) / 2);
         
         // Draw Original (Ghost)
         ctx.strokeStyle = '#cccccc';
@@ -47,12 +98,6 @@ var visualizer = (function() {
             bodyLength * shrinkage.lengthFactor, 
             sleeveLength * shrinkage.sleeveFactor
         );
-
-        // Before/After overlay annotations
-        ctx.setLineDash([]);
-        ctx.fillStyle = '#333';
-        ctx.font = '14px Arial';
-        ctx.fillText('ΔLength: ' + pct(shrinkage.lengthFactor) + '  ΔWidth: ' + pct(shrinkage.widthFactor) + '  ΔSleeve: ' + pct(shrinkage.sleeveFactor), 20, 25);
 
         // Crosshair dims
         drawDimensionMarkers(centerX, topY, bodyWidth, bodyLength, sleeveLength, shrinkage);

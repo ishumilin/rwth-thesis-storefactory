@@ -9,6 +9,10 @@
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
 <body>
+    @{
+        var currentController = (ViewContext.RouteData.Values["controller"] as string ?? "").ToLowerInvariant();
+        var currentAction = (ViewContext.RouteData.Values["action"] as string ?? "").ToLowerInvariant();
+    }
     <nav class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
@@ -22,16 +26,15 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
-                    <li><a asp-area="" asp-controller="Simulator" asp-action="Index">Simulator</a></li>
-                    <li><a asp-area="" asp-controller="Analysis" asp-action="Index">Simulation Analysis</a></li>
-                    <li><a asp-area="" asp-controller="Analysis" asp-action="Performance">Performance Analysis</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
+                    <li class="@(currentController == "home" && currentAction == "index" ? "active" : "")"><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li class="@(currentController == "simulator" ? "active" : "")"><a asp-area="" asp-controller="Simulator" asp-action="Index">Simulator</a></li>
+                    <li class="@(currentController == "analysis" && currentAction == "index" ? "active" : "")"><a asp-area="" asp-controller="Analysis" asp-action="Index">Simulation Analysis</a></li>
+                    <li class="@(currentController == "analysis" && currentAction == "performance" ? "active" : "")"><a asp-area="" asp-controller="Analysis" asp-action="Performance">Performance Analysis</a></li>
                 </ul>
             </div>
         </div>
     </nav>
-    <div class="container body-content">
+    <div class="container-fluid body-content">
         @RenderBody()
         <hr />
         <footer>

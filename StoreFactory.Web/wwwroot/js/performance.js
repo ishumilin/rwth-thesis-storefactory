@@ -20,13 +20,15 @@ $(document).ready(function () {
                 data: { datasets: [{
                     label: 'Speedup',
                     data: [],
-                    borderColor: "rgba(255,99,132,1)",
+                    borderColor: "rgba(241,194,50,1)",
                     fill: false,
                     pointRadius: 3
                 }] },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
                     animation: { duration: 0 },
+                    legend: { position: 'bottom', labels: { boxWidth: 10 } },
                     scales: {
                         yAxes: [{ ticks: { beginAtZero: true } }],
                         xAxes: [{ type: 'linear', position: 'bottom', ticks: { beginAtZero: true, stepSize: 1 } }]
@@ -42,13 +44,15 @@ $(document).ready(function () {
                 data: { datasets: [{
                     label: 'Efficiency',
                     data: [],
-                    borderColor: "rgba(54,162,235,1)",
+                    borderColor: "rgba(52,58,68,1)",
                     fill: false,
                     pointRadius: 3
                 }] },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
                     animation: { duration: 0 },
+                    legend: { position: 'bottom', labels: { boxWidth: 10 } },
                     scales: {
                         yAxes: [{ ticks: { beginAtZero: true, suggestedMax: 1 } }],
                         xAxes: [{ type: 'linear', position: 'bottom', ticks: { beginAtZero: true, stepSize: 1 } }]
@@ -64,13 +68,15 @@ $(document).ready(function () {
                 data: { datasets: [{
                     label: 'Seconds',
                     data: [],
-                    borderColor: "rgba(75,192,192,1)",
+                    borderColor: "rgba(214,172,64,1)",
                     fill: false,
                     pointRadius: 3
                 }] },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
                     animation: { duration: 0 },
+                    legend: { position: 'bottom', labels: { boxWidth: 10 } },
                     scales: {
                         yAxes: [{ ticks: { beginAtZero: true } }],
                         xAxes: [{ type: 'linear', position: 'bottom', ticks: { beginAtZero: true, stepSize: 1 } }]
@@ -86,13 +92,15 @@ $(document).ready(function () {
                 data: { labels: [], datasets: [{
                     label: 'Overhead (s)',
                     data: [],
-                    backgroundColor: "rgba(153,102,255,0.5)",
-                    borderColor: "rgba(153,102,255,1)",
+                    backgroundColor: "rgba(52,58,68,0.25)",
+                    borderColor: "rgba(52,58,68,1)",
                     borderWidth: 1
                 }] },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
                     animation: { duration: 0 },
+                    legend: { display: false },
                     scales: { yAxes: [{ ticks: { beginAtZero: true } }] }
                 }
             });

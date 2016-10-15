@@ -16,15 +16,16 @@ $(document).ready(function () {
     var $recTable = $("#recTable");
 
     var $surfaceFactor = $("#surfaceFactor");
-    var $minLength = $("#minLength");
+    var $lengthTarget = $("#lengthTarget");
     var $constraintStatus = $("#constraintStatus");
     var $interpMode = $("#interpMode");
 
     var $optStatus = $("#optStatus");
-    var $targetFactor = $("#targetFactor");
 
-    var $expNote = $("#expNote");
-    var $expTable = $("#expTable");
+    // Equal-height columns are handled via CSS Grid in site.css (wide screens).
+    // Keep this as a no-op to avoid fighting the CSS layout.
+    function equalizeMainColumns() { }
+
 
     var myChart;
     var surfaceCache = {}; // key: materialId|factor
@@ -36,6 +37,23 @@ $(document).ready(function () {
     var surfaceRequest = null;
     var lastRequestAt = 0;
     var minRequestIntervalMs = 25;
+
+    function setStatus(text, className) {
+        var $el = $('#resStatus');
+        if (!$el.length) return;
+        $el.text(text);
+        $el.removeClass('sf-status-ok sf-status-warn sf-status-bad');
+        if (className) {
+            $el.addClass(className);
+        }
+    }
+
+    function formatDelta(factor) {
+        if (typeof factor !== 'number' || isNaN(factor)) return '--';
+        var pct = (factor - 1) * 100;
+        var sign = pct > 0 ? '+' : '';
+        return sign + pct.toFixed(1) + '%';
+    }
 
     function debounceCalculate() {
         if (pendingTimer) {
@@ -63,7 +81,6 @@ $(document).ready(function () {
     $material.change(function () {
         surfaceCache = {};
         debounceCalculate();
-        refreshExperiments();
     });
 
     $surfaceFactor.change(function () {
@@ -77,22 +94,26 @@ $(document).ready(function () {
         });
     }
 
-    $minLength.on("input", function () {
+    $lengthTarget.on("input", function () {
         updateConstraints();
     });
 
     // Presets
-    $("#presetLow").click(function () {
-        setControls(80, 3);
-    });
-    $("#presetBalanced").click(function () {
+    $('#presetApply').on('click', function () {
+        var preset = String($('#presetSelect').val() || 'balanced');
+        if (preset === 'low') {
+            setControls(80, 3);
+            return;
+        }
+        if (preset === 'max') {
+            setControls(200, 20);
+            return;
+        }
+        if (preset === 'safe') {
+            setControls(110, 2);
+            return;
+        }
         setControls(130, 8);
-    });
-    $("#presetMax").click(function () {
-        setControls(200, 20);
-    });
-    $("#presetSafe").click(function () {
-        setControls(110, 2);
     });
 
     function setControls(t, d) {
@@ -110,7 +131,7 @@ $(document).ready(function () {
         $.post("/Simulator/Optimize", {
             materialId: parseInt($material.val(), 10),
             factor: "length",
-            target: parseFloat($targetFactor.val())
+            target: safeTarget()
         }).done(function (res) {
             $optStatus.text("Found T=" + res.temperature + ", D=" + res.dwellTime + " (score=" + res.score.toFixed(4) + ")");
             setControls(res.temperature, res.dwellTime);
@@ -119,86 +140,19 @@ $(document).ready(function () {
         });
     });
 
-    // Experiment log
-    $("#btnLog").click(function () {
-        if (!lastResult) return;
-        var entry = {
-            materialId: parseInt($material.val(), 10),
-            temperature: parseFloat($temp.val()),
-            dwellTime: parseFloat($time.val()),
-            lengthFactor: lastResult.lengthFactor,
-            widthFactor: lastResult.widthFactor,
-            sleeveFactor: lastResult.sleeveFactor,
-            note: $expNote.val() || ""
-        };
-
-        $.post("/Simulator/Log", entry).done(function () {
-            $expNote.val("");
-            refreshExperiments();
-        }).fail(function () {
-            alert("Log failed. Check server logs.");
-        });
-    });
-
-    $("#btnExportCsv").click(function () {
-        exportCsv();
-    });
-
-    function exportCsv() {
-        $.getJSON("/Simulator/Experiments", function (rows) {
-            var header = ["unixMs", "materialId", "temperature", "dwellTime", "lengthFactor", "widthFactor", "sleeveFactor", "note"].join(",");
-            var lines = [header];
-            for (var i = 0; i < rows.length; i++) {
-                var r = rows[i];
-                lines.push([
-                    r.unixMs,
-                    r.materialId,
-                    r.temperature,
-                    r.dwellTime,
-                    r.lengthFactor,
-                    r.widthFactor,
-                    r.sleeveFactor,
-                    '"' + String(r.note || "").replace(/"/g, '""') + '"'
-                ].join(","));
-            }
-
-            var csv = lines.join("\n");
-            var blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
-            var url = URL.createObjectURL(blob);
-            var a = document.createElement("a");
-            a.href = url;
-            a.download = "simulator_experiments.csv";
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        });
-    }
-
-    function refreshExperiments() {
-        $.getJSON("/Simulator/Experiments", function (rows) {
-            $expTable.empty();
-            // render last 15 entries
-            var start = Math.max(0, rows.length - 15);
-            for (var i = rows.length - 1; i >= start; i--) {
-                var r = rows[i];
-                var dt = new Date(r.unixMs);
-                var tr = "<tr>" +
-                    "<td>" + dt.toLocaleTimeString() + "</td>" +
-                    "<td>" + r.materialId + "</td>" +
-                    "<td>" + r.temperature + "</td>" +
-                    "<td>" + r.dwellTime + "</td>" +
-                    "<td>" + r.lengthFactor.toFixed(3) + "</td>" +
-                    "<td>" + r.widthFactor.toFixed(3) + "</td>" +
-                    "<td>" + r.sleeveFactor.toFixed(3) + "</td>" +
-                    "</tr>";
-                $expTable.append(tr);
-            }
-        });
-    }
 
     // Charts
     initChart();
+
+    // Ensure charts are resized if layout changes (e.g., window resize)
+    $(window).on('resize', function () {
+        if (myChart) {
+            myChart.resize();
+            myChart.update(0);
+        }
+        equalizeMainColumns();
+    });
+
 
     function initChart() {
         var chartCtx = document.getElementById("shrinkageChart");
@@ -211,15 +165,15 @@ $(document).ready(function () {
                     {
                         label: 'Length Factor (curve)',
                         data: [],
-                        borderColor: "rgba(75,192,192,1)",
+                        borderColor: "rgba(241,194,50,1)",
                         fill: false,
                         pointRadius: 0
                     },
                     {
                         label: 'Current setting',
                         data: [],
-                        borderColor: "rgba(255,99,132,1)",
-                        backgroundColor: "rgba(255,99,132,1)",
+                        borderColor: "rgba(52,58,68,1)",
+                        backgroundColor: "rgba(52,58,68,1)",
                         fill: false,
                         showLine: false,
                         pointRadius: 5
@@ -228,14 +182,32 @@ $(document).ready(function () {
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
                 animation: { duration: 0 },
                 tooltips: { enabled: true },
+                legend: {
+                    display: true,
+                    position: 'bottom',
+                    fullWidth: true,
+                    labels: {
+                        boxWidth: 8,
+                        padding: 8,
+                        fontSize: 9
+                    }
+                },
+                layout: {
+                    padding: { top: 4, right: 6, bottom: 0, left: 0 }
+                },
+                elements: {
+                    line: { tension: 0 },
+                    point: { radius: 0 }
+                },
                 scales: {
                     yAxes: [{
                         ticks: {
                             beginAtZero: false,
-                            suggestedMin: 0.80,
-                            suggestedMax: 1.10
+                            min: 0.90,
+                            max: 1.05
                         }
                     }],
                     xAxes: [{
@@ -319,12 +291,12 @@ $(document).ready(function () {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         // Layout
-        var padL = 35, padR = 10, padT = 10, padB = 25;
+        var padL = 35, padR = 80, padT = 10, padB = 32;
         var w = canvas.width - padL - padR;
         var h = canvas.height - padT - padB;
 
         // Axes
-        ctx.strokeStyle = "#aaa";
+        ctx.strokeStyle = "#b7bdc9";
         ctx.beginPath();
         ctx.moveTo(padL, padT);
         ctx.lineTo(padL, padT + h);
@@ -364,6 +336,17 @@ $(document).ready(function () {
         for (var k = 1; k <= n; k++) {
             levels.push(minV + (k / (n + 1)) * (maxV - minV));
         }
+
+        // Draw legend guide for contour levels
+        ctx.strokeStyle = "#c6cbd6";
+        ctx.beginPath();
+        ctx.moveTo(padL + w + 18, padT);
+        ctx.lineTo(padL + w + 18, padT + h);
+        ctx.stroke();
+
+        ctx.fillStyle = "#6b7486";
+        ctx.font = "10px Arial";
+        ctx.fillText("Factor", padL + w + 8, padT + h + 22);
 
         // Marching squares
         for (var li = 0; li < levels.length; li++) {
@@ -454,13 +437,20 @@ $(document).ready(function () {
             ctx.stroke();
 
             // Label each contour level
-            ctx.fillStyle = "#666";
-            ctx.font = "10px Arial";
-            ctx.fillText(level.toFixed(3), padL + w + 2, padT + 12 + li * 12);
+            var legendY = padT + 14 + li * 16;
+            ctx.strokeStyle = contourColor(li, levels.length);
+            ctx.beginPath();
+            ctx.moveTo(padL + w + 14, legendY - 3);
+            ctx.lineTo(padL + w + 22, legendY - 3);
+            ctx.stroke();
+
+            ctx.fillStyle = "#6b7486";
+            ctx.font = "12px Arial";
+            ctx.fillText(level.toFixed(3), padL + w + 28, legendY);
         }
 
         // Axis labels
-        ctx.fillStyle = "#666";
+        ctx.fillStyle = "#6b7486";
         ctx.font = "10px Arial";
         ctx.fillText("T", padL + w - 8, padT + h + 18);
         ctx.fillText("D", 8, padT + 10);
@@ -469,7 +459,7 @@ $(document).ready(function () {
         if (marker) {
             var mx = padL + ((marker.t - 30) / (200 - 30)) * w;
             var my = padT + ((marker.d - 1) / (20 - 1)) * h;
-            ctx.fillStyle = "rgba(255,99,132,1)";
+            ctx.fillStyle = "rgba(241,194,50,1)";
             ctx.beginPath();
             ctx.arc(mx, my, 4, 0, Math.PI * 2);
             ctx.fill();
@@ -522,40 +512,48 @@ $(document).ready(function () {
                 if (t < 0) t = 0;
                 if (t > 1) t = 1;
 
-                // blue (high) -> red (low)
-                var r = Math.round(220 * (1 - t) + 30 * t);
-                var g = Math.round(80 + 60 * t);
-                var b = Math.round(220 * t + 40 * (1 - t));
+                // warm yellow -> red gradient to match theme
+                var r = Math.round(255 * (1 - t) + 220 * t);
+                var g = Math.round(210 * (1 - t) + 90 * t);
+                var b = Math.round(95 * (1 - t) + 70 * t);
 
                 var x0 = padL + (ti / (temps.length - 1)) * w;
                 var x1 = padL + ((ti + 1) / (temps.length - 1)) * w;
                 var y0 = padT + (di / (dwells.length - 1)) * h;
                 var y1 = padT + ((di + 1) / (dwells.length - 1)) * h;
 
-                ctx.fillStyle = 'rgba(' + r + ',' + g + ',' + b + ',0.12)';
+                ctx.fillStyle = 'rgba(' + r + ',' + g + ',' + b + ',0.18)';
                 ctx.fillRect(x0, y0, x1 - x0, y1 - y0);
             }
         }
     }
 
     function contourColor(i, total) {
-        // simple gradient (teal -> purple)
+        // warm gradient (dark -> yellow/red)
         var t = total <= 1 ? 0 : i / (total - 1);
-        var r = Math.round(50 + 120 * t);
-        var g = Math.round(160 - 100 * t);
-        var b = Math.round(180 + 60 * t);
+        var r = Math.round(70 + 180 * t);
+        var g = Math.round(60 + 90 * t);
+        var b = Math.round(60 + 20 * t);
         return "rgb(" + r + "," + g + "," + b + ")";
+    }
+
+    function safeTarget() {
+        var raw = parseFloat($lengthTarget.val());
+        if (isNaN(raw)) {
+            return 0.92;
+        }
+        return raw;
     }
 
     function updateConstraints() {
         if (!lastResult) return;
-        var minL = parseFloat($minLength.val());
-        if (lastResult.lengthFactor >= minL) {
+        var target = safeTarget();
+        if (lastResult.lengthFactor >= target) {
             $constraintStatus.removeClass("alert-danger").addClass("alert-success");
-            $constraintStatus.text("OK: length factor >= " + minL.toFixed(2));
+            $constraintStatus.text("OK: length factor >= " + target.toFixed(2));
         } else {
             $constraintStatus.removeClass("alert-success").addClass("alert-danger");
-            $constraintStatus.text("FAIL: length factor < " + minL.toFixed(2));
+            $constraintStatus.text("FAIL: length factor < " + target.toFixed(2));
         }
     }
 
@@ -656,14 +654,21 @@ $(document).ready(function () {
             $("#resSleeve").text(result.sleeveFactor.toFixed(3));
             updateConfidenceBadge(result);
 
-            // Warning logic
+            $('#legendLength').text(formatDelta(result.lengthFactor));
+            $('#legendWidth').text(formatDelta(result.widthFactor));
+            $('#legendSleeve').text(formatDelta(result.sleeveFactor));
+
+            // Status derived from existing warning threshold
+            var status = 'OK';
+            var cls = 'sf-status-ok';
             if (result.lengthFactor < 0.95 || result.widthFactor < 0.95) {
-                if ($("#warningMsg").length === 0) {
-                    $("#resultsPanel").append('<div id="warningMsg" class="alert alert-danger" style="margin-top:10px">High Shrinkage Detected!</div>');
-                }
-            } else {
-                $("#warningMsg").remove();
+                status = 'High shrinkage risk';
+                cls = 'sf-status-bad';
+            } else if (result.lengthFactor < 0.98 || result.widthFactor < 0.98) {
+                status = 'Watch';
+                cls = 'sf-status-warn';
             }
+            setStatus(status, cls);
 
             // Visualizer
             if (typeof updateVisualizer === "function") {
@@ -687,6 +692,7 @@ $(document).ready(function () {
 
             // Explainability (simple)
             $interpMode.text("2D bilinear + fallbacks");
+            setTimeout(equalizeMainColumns, 50);
         }).always(function () {
             showLoading(false);
         });
@@ -704,6 +710,11 @@ $(document).ready(function () {
     }
 
     // Initial load
-    refreshExperiments();
     calculateAndUpdate();
+    setTimeout(equalizeMainColumns, 50);
+
+    // Ensure legend values render even before the first response.
+    $('#legendLength').text(formatDelta(1));
+    $('#legendWidth').text(formatDelta(1));
+    $('#legendSleeve').text(formatDelta(1));
 });

@@ -4,30 +4,81 @@
 
 <div class="jumbotron">
     <h1>StoreFactory Web Simulator</h1>
-    <p class="lead">Increasing Performance of the Textile Production Chain.</p>
-    <p><a asp-controller="Home" asp-action="About" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
+    <p class="lead">Digital lab for modeling fabric shrinkage in automated textile production.</p>
+    <p class="text-muted">Use the simulator and analysis dashboards to support thesis validation and industrial insights.</p>
+    <p>
+        <a asp-controller="Simulator" asp-action="Index" class="btn btn-primary btn-lg">Open Simulator &raquo;</a>
+        <a asp-controller="Analysis" asp-action="Index" class="btn btn-default btn-lg">View Analysis &raquo;</a>
+    </p>
 </div>
 
 <div class="row">
-    <div class="col-md-4">
-        <h2>Simulator</h2>
-        <p>
-            Interactive lab to visualize material shrinkage parameters.
-        </p>
-        <p><a asp-controller="Simulator" asp-action="Index" class="btn btn-default">Start Simulation &raquo;</a></p>
+    <div class="col-md-12">
+        <div class="panel panel-default sf-analysis-summary">
+            <div class="panel-heading">Project at a glance</div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="sf-metric">
+                            <div class="sf-metric-label">Simulator</div>
+                            <div class="sf-metric-value">Model shrinkage</div>
+                            <div class="sf-metric-sub">Interactive controls simulate heat-setting parameters and predict length, width, and sleeve factors for a selected material.</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="sf-metric">
+                            <div class="sf-metric-label">Analysis</div>
+                            <div class="sf-metric-value">Explain trends</div>
+                            <div class="sf-metric-sub">Aggregated curves, surface maps, and risk indicators reveal how shrinkage behaves across temperatures and dwell times.</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="sf-metric">
+                            <div class="sf-metric-label">Performance</div>
+                            <div class="sf-metric-value">Benchmark speed</div>
+                            <div class="sf-metric-sub">Parallel processing benchmarks quantify speedups and efficiency for scaling the simulation pipeline.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="col-md-4">
-        <h2>Analysis</h2>
-        <p>
-            View the results of the Heat Setting Analysis (Chapter 5).
-        </p>
-        <p><a class="btn btn-default" href="/Analysis">View Charts &raquo;</a></p>
+</div>
+
+<div class="row">
+    <div class="col-md-7">
+        <div class="panel panel-default">
+            <div class="panel-heading">Thesis context</div>
+            <div class="panel-body">
+                <p>
+                    This thesis focuses on automating the StoreFactory textile production chain by connecting
+                    body scanners, knitting machines, and shrinkage-aware calibration. The simulator demonstrates
+                    how heat-setting parameters influence garment dimensions and supports data-driven decisions.
+                </p>
+            </div>
+        </div>
     </div>
-    <div class="col-md-4">
-        <h2>Documentation</h2>
-        <p>
-            Read the Master Thesis abstract and methodology.
-        </p>
-        <p><a asp-controller="Home" asp-action="About" class="btn btn-default">Read Thesis &raquo;</a></p>
+    <div class="col-md-5">
+        <div class="panel panel-default">
+            <div class="panel-heading">Project components</div>
+            <div class="panel-body">
+                <ul>
+                    <li><strong>Global Controller (GC)</strong> — central management utility.</li>
+                    <li><strong>Converter Unit (CU)</strong> — adjusts measurements for shrinkage.</li>
+                    <li><strong>Database (DB)</strong> — stores material parameters.</li>
+                    <li><strong>XMLTool</strong> — generates PPS job files.</li>
+                </ul>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">How to use the simulator</div>
+            <div class="panel-body">
+                <ol style="margin-bottom:0;">
+                    <li>Pick a material, temperature, and dwell time.</li>
+                    <li>Review shrinkage factors and the insight charts.</li>
+                    <li>Use presets or recommendations for feasible settings.</li>
+                </ol>
+            </div>
+        </div>
     </div>
 </div>

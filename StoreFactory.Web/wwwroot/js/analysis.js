@@ -25,8 +25,10 @@ $(document).ready(function () {
                 data: { datasets: [] },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
                     animation: { duration: 0 },
                     tooltips: { enabled: true },
+                    legend: { display: true, position: 'bottom', labels: { boxWidth: 10 } },
                     scales: {
                         yAxes: [{ ticks: { beginAtZero: false, suggestedMin: 0.95, suggestedMax: 1.02 } }],
                         xAxes: [{ type: 'linear', position: 'bottom', ticks: { min: 30, max: 200, stepSize: 20 } }]
@@ -42,8 +44,10 @@ $(document).ready(function () {
                 data: { datasets: [] },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
                     animation: { duration: 0 },
                     tooltips: { enabled: true },
+                    legend: { display: true, position: 'bottom', labels: { boxWidth: 10 } },
                     scales: {
                         yAxes: [{ ticks: { beginAtZero: false, suggestedMin: 0.95, suggestedMax: 1.02 } }],
                         xAxes: [{ type: 'linear', position: 'bottom', ticks: { min: 1, max: 20, stepSize: 2 } }]
@@ -61,14 +65,16 @@ $(document).ready(function () {
                     datasets: [{
                         label: 'Avg Length Factor',
                         data: [],
-                        backgroundColor: "rgba(75,192,192,0.5)",
-                        borderColor: "rgba(75,192,192,1)",
+                        backgroundColor: "rgba(241,194,50,0.35)",
+                        borderColor: "rgba(241,194,50,1)",
                         borderWidth: 1
                     }]
                 },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
                     animation: { duration: 0 },
+                    legend: { display: false },
                     scales: { yAxes: [{ ticks: { beginAtZero: false, suggestedMin: 0.85, suggestedMax: 1.10 } }] }
                 }
             });
@@ -81,7 +87,9 @@ $(document).ready(function () {
                 data: { labels: [], datasets: [] },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
                     animation: { duration: 0 },
+                    legend: { position: 'bottom', labels: { boxWidth: 10 } },
                     scale: { ticks: { suggestedMin: 0.85, suggestedMax: 1.10 } }
                 }
             });
@@ -94,13 +102,15 @@ $(document).ready(function () {
                 data: { labels: [], datasets: [{
                     label: 'Count',
                     data: [],
-                    backgroundColor: "rgba(54,162,235,0.5)",
-                    borderColor: "rgba(54,162,235,1)",
+                    backgroundColor: "rgba(52,58,68,0.25)",
+                    borderColor: "rgba(52,58,68,1)",
                     borderWidth: 1
                 }] },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
                     animation: { duration: 0 },
+                    legend: { display: false },
                     scales: { yAxes: [{ ticks: { beginAtZero: true } }] }
                 }
             });
@@ -113,7 +123,9 @@ $(document).ready(function () {
                 data: { labels: [], datasets: [] },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
                     animation: { duration: 0 },
+                    legend: { position: 'bottom', labels: { boxWidth: 10 } },
                     scales: {
                         yAxes: [{ ticks: { beginAtZero: true, suggestedMax: 100 } }],
                         xAxes: [{ stacked: true }]
@@ -129,13 +141,15 @@ $(document).ready(function () {
                 data: { labels: [], datasets: [{
                     label: '% below 0.95',
                     data: [],
-                    backgroundColor: "rgba(255,99,132,0.5)",
-                    borderColor: "rgba(255,99,132,1)",
+                    backgroundColor: "rgba(214,172,64,0.35)",
+                    borderColor: "rgba(214,172,64,1)",
                     borderWidth: 1
                 }] },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
                     animation: { duration: 0 },
+                    legend: { display: false },
                     scales: { yAxes: [{ ticks: { beginAtZero: true, suggestedMax: 100 } }] }
                 }
             });
@@ -149,14 +163,16 @@ $(document).ready(function () {
                     datasets: [{
                         label: 'Speedup',
                         data: [],
-                        borderColor: "rgba(255,99,132,1)",
+                        borderColor: "rgba(241,194,50,1)",
                         fill: false,
                         pointRadius: 3
                     }]
                 },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
                     animation: { duration: 0 },
+                    legend: { position: 'bottom', labels: { boxWidth: 10 } },
                     scales: {
                         yAxes: [{ ticks: { beginAtZero: true, suggestedMax: 8 } }],
                         xAxes: [{ type: 'linear', position: 'bottom', ticks: { beginAtZero: true, stepSize: 1 } }]
@@ -189,10 +205,10 @@ $(document).ready(function () {
         if (!data || !data.curves) return;
 
         var colors = [
-            "rgba(255,99,132,1)",
-            "rgba(54,162,235,1)",
-            "rgba(75,192,192,1)",
-            "rgba(255,206,86,1)"
+            "rgba(241,194,50,1)",
+            "rgba(52,58,68,1)",
+            "rgba(141,148,163,1)",
+            "rgba(214,172,64,1)"
         ];
 
         if (analysisTempChart && data.curves.temperature) {
@@ -280,7 +296,7 @@ $(document).ready(function () {
                 datasets.push({
                     label: dwellBins[j] + "–" + dwellBins[j + 1] + " min",
                     data: stability.values[j],
-                    backgroundColor: "rgba(75,192,192," + (0.15 + j * 0.1) + ")"
+                    backgroundColor: "rgba(241,194,50," + (0.15 + j * 0.1) + ")"
                 });
             }
             analysisStabilityChart.data.labels = labels;

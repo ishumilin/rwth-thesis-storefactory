@@ -1,6 +1,29 @@
+:root {
+    --sf-dark: #1f232a;
+    --sf-dark-2: #2b3038;
+    --sf-dark-3: #343a44;
+    --sf-accent: #f1c232;
+    --sf-accent-strong: #f4b400;
+    --sf-card: #ffffff;
+    --sf-background: #f2f4f8;
+    --sf-border: #d6dbe5;
+    --sf-muted: #6b7486;
+    --sf-text: #2a2f36;
+    --sf-shadow: 0 8px 20px rgba(31, 35, 42, 0.12);
+}
+
 body {
-    padding-top: 50px;
+    padding-top: 56px;
     padding-bottom: 20px;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--sf-background);
+    color: var(--sf-text);
+}
+
+/* Prevent accidental horizontal scrolling caused by wide canvases/tables */
+html, body {
+    max-width: 100%;
+    overflow-x: hidden;
 }
 
 /* Wrapping element */
@@ -8,6 +31,28 @@ body {
 .body-content {
     padding-left: 15px;
     padding-right: 15px;
+}
+
+/* Use space better on large desktop screens while keeping readable line length */
+@media (min-width: 1200px) {
+    .body-content {
+        padding-left: 24px;
+        padding-right: 24px;
+    }
+}
+
+@media (min-width: 1600px) {
+    .body-content {
+        padding-left: 40px;
+        padding-right: 40px;
+    }
+}
+
+/* Container-fluid makes pages very wide; keep content readable with a max width */
+.body-content {
+    max-width: 1440px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 /* Carousel */
@@ -32,22 +77,71 @@ body {
 /* Simulator Styles */
 .panel-heading {
     font-weight: bold;
+    position: relative;
+    padding-right: 28px; /* reserve space for tooltip icon */
+}
+
+.sf-panel-heading-inline {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.sf-panel-heading-inline .sf-heading-left {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.sf-panel-heading-inline .btn-group {
+    margin-left: auto;
+    padding-left: 12px;
+}
+
+.sf-panel-heading-center {
+    justify-content: center;
+    position: relative;
+}
+
+.sf-panel-heading-center .sf-heading-left {
+    margin-right: auto;
+}
+
+.sf-panel-heading-center .btn-group {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    padding-left: 0;
+    margin-left: 0;
 }
 
 .sf-section {
     margin-bottom: 12px;
 }
 
+/* Better vertical rhythm on bigger screens */
+@media (min-width: 992px) {
+    .sf-section {
+        margin-bottom: 16px;
+    }
+}
+
 .sf-section-title {
-    background: #f4f6f9;
-    border: 1px solid #e4e8ef;
+    background: var(--sf-dark-2);
+    border: 1px solid var(--sf-dark-2);
     border-bottom: none;
-    padding: 6px 10px;
+    padding: 7px 32px 7px 12px; /* right padding leaves room for the ? icon */
     font-weight: 600;
-    color: #2f3b52;
+    color: var(--sf-accent);
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    font-size: 12px;
+    letter-spacing: 0.6px;
+    font-size: 11px;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+
+    /* Allow the help icon to be positioned on the far right of the bar */
+    position: relative;
 }
 
 .sf-panel-compact .panel-body {
@@ -77,6 +171,35 @@ body {
     margin-top: 4px;
 }
 
+.sf-info-note {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #f3f5f9;
+    border: 1px solid var(--sf-border);
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-size: 12px;
+    color: var(--sf-dark-3);
+    margin-top: 10px;
+}
+
+.sf-info-note.sf-info-compact {
+    margin-top: 8px;
+    padding: 6px 10px;
+}
+
+.sf-info-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    font-weight: 600;
+    color: var(--sf-muted);
+    background: rgba(241, 194, 50, 0.18);
+    border-radius: 10px;
+    padding: 2px 6px;
+}
+
 .sf-unit {
     font-size: 12px;
     color: #6c6f73;
@@ -89,6 +212,17 @@ body {
     justify-content: space-between;
     padding: 6px 0;
     border-bottom: 1px solid #eee;
+    gap: 12px;
+}
+
+/* Avoid overlapping / squashed result text in narrow panels */
+.sf-result-row > div:first-child {
+    min-width: 0;
+}
+
+.sf-result-label,
+.sf-result-caption {
+    word-break: break-word;
 }
 
 .sf-result-row:last-child {
@@ -104,10 +238,25 @@ body {
     color: #888;
 }
 
+.sf-status-note {
+    background: #eef2f8;
+    border: 1px solid var(--sf-border);
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--sf-dark-3);
+    margin-top: 10px;
+}
+
 .sf-result-value {
     font-size: 18px;
     line-height: 1;
 }
+
+.sf-result-value.sf-status-ok { color: #2e7d32; }
+.sf-result-value.sf-status-warn { color: #b26a00; }
+.sf-result-value.sf-status-bad { color: #b71c1c; }
 
 .sf-tabs {
     margin-top: 10px;
@@ -119,11 +268,13 @@ body {
 
 .sf-tab-group-title {
     margin: 12px 0 6px;
-    font-size: 12px;
+    font-size: 11px;
     text-transform: uppercase;
     font-weight: 600;
-    color: #667084;
-    letter-spacing: 0.5px;
+    color: var(--sf-dark-3);
+    letter-spacing: 0.6px;
+    position: relative;
+    padding-right: 28px; /* reserve space for tooltip icon */
 }
 
 .sf-tab-desc {
@@ -142,6 +293,74 @@ body {
     background-color: #f7f9fb;
 }
 
+/* Smart factory tab buttons: prevent overlap on narrow panels */
+.sf-insights-tabs > li > a {
+    padding: 8px 6px;
+    font-size: 12px;
+    white-space: normal;
+    text-align: center;
+}
+
+.sf-insights-tabs > li {
+    float: none;
+    display: table-cell;
+    width: 1%;
+}
+
+@media (max-width: 991px) {
+    .sf-insights-tabs {
+        display: flex;
+        flex-wrap: wrap;
+    }
+    .sf-insights-tabs > li {
+        flex: 1 1 33%;
+        display: block;
+    }
+}
+
+/* KPI strip above visualizer */
+.sf-kpi-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.sf-kpi {
+    flex: 1;
+    min-width: 110px;
+    background: var(--sf-card);
+    border: 1px solid var(--sf-border);
+    border-radius: 6px;
+    padding: 10px 12px;
+    box-shadow: var(--sf-shadow);
+}
+
+.sf-kpi-wide {
+    flex: 2;
+    min-width: 180px;
+}
+
+.sf-kpi-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--sf-muted);
+    font-weight: 600;
+}
+
+.sf-kpi-value {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--sf-dark);
+    line-height: 1.2;
+    margin-top: 4px;
+}
+
+.sf-kpi-value.sf-status-ok { color: #2e7d32; }
+.sf-kpi-value.sf-status-warn { color: #b26a00; }
+.sf-kpi-value.sf-status-bad { color: #b71c1c; }
+
 .sf-canvas-wrap {
     width: 100%;
     overflow: hidden;
@@ -153,8 +372,150 @@ body {
     height: auto;
 }
 
+.sf-surface-wrap {
+    /* Do not force extra vertical space inside Insights */
+    min-height: 0;
+}
+
+.sf-surface-wrap canvas {
+    min-height: 0;
+}
+
+/* Chart canvases should fill their container to make room for legends. */
+.sf-canvas-wrap canvas,
+.sf-analysis-panel canvas {
+    min-height: 220px;
+}
+
+/* In the Simulator Insights sidebar, avoid forcing extra height on canvases. */
+.sf-insights-panel .sf-canvas-wrap canvas {
+    min-height: 0;
+}
+
+/* Canvases outside .sf-canvas-wrap (e.g., visualizer) */
+canvas {
+    max-width: 100%;
+}
+
+/* Make tables never force overflow */
+.table-responsive {
+    border: 0;
+}
+
+/* Improve small-screen layout to avoid tight / overlapping UI */
+@media (max-width: 991px) {
+    .sf-tooling .btn {
+        margin-bottom: 6px;
+    }
+
+    .sf-result-value {
+        font-size: 16px;
+    }
+
+    .sf-surface-wrap {
+        min-height: 240px;
+    }
+}
+
+/* Visualizer canvases: keep within column width and avoid fixed pixel overflow */
+#sweaterCanvas,
+#mannequinCanvas {
+    width: 100%;
+    height: auto;
+}
+
+/* 2D visualizer centering */
+.sf-visualizer-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 0;
+}
+
+.sf-visualizer-wrap #sweaterCanvas {
+    width: 520px;
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto;
+    display: block;
+}
+
+.sf-legend {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin: 6px 0 12px;
+    font-size: 12px;
+    color: #5f6b7a;
+}
+
+.sf-legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.sf-legend-label {
+    text-transform: uppercase;
+    font-size: 10px;
+    letter-spacing: 0.4px;
+    color: #7a8699;
+}
+
+.sf-legend-value {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--sf-dark);
+}
+
+.sf-legend-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: rgba(241, 194, 50, 0.15);
+    color: var(--sf-dark);
+    font-weight: 600;
+    font-size: 11px;
+}
+
 .sf-tooling {
     margin-top: 16px;
+}
+
+/* Smart factory column height alignment */
+.sf-tooling-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+}
+
+.sf-tooling-row > [class*="col-"] {
+    display: flex;
+    flex-direction: column;
+}
+
+.sf-tooling-row > [class*="col-"] > .panel {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.sf-tooling-row > [class*="col-"] > .panel > .panel-body {
+    flex: 1 1 auto;
+}
+
+/* Preset buttons: allow wrapping and spacing to avoid overlap */
+.sf-tooling .btn-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.sf-tooling .btn-group > .btn {
+    float: none;
 }
 
 .sf-analysis-intro {
@@ -174,18 +535,161 @@ body {
     margin-bottom: 20px;
 }
 
+.sf-analysis-panel .panel-body,
+.sf-analysis-summary .panel-body {
+    padding-bottom: 18px;
+}
+
+.sf-analysis-panel .help-block {
+    margin-top: 8px;
+    margin-bottom: 0;
+}
+
+.sf-analysis-panel .sf-canvas-wrap {
+    min-height: 260px;
+}
+
+/* Simulator 3-column layout */
+.sf-main-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+}
+
+/* Override Bootstrap row clearfix pseudo-elements so flex sizing behaves predictably. */
+.sf-main-row::before,
+.sf-main-row::after {
+    content: none;
+    display: none;
+}
+
+/* Keep Bootstrap column widths, but allow equal-height behavior */
+.sf-main-row > [class*="col-"] {
+    display: flex;
+    flex-direction: column;
+    align-self: stretch;
+    float: none;
+}
+
+/* Use CSS grid on wide screens to guarantee equal-height columns */
+@media (min-width: 1200px) {
+    .sf-main-row {
+        display: grid;
+        grid-template-columns: 3fr 6fr 3fr;
+        grid-column-gap: 20px;
+        align-items: stretch; /* equal-height columns */
+    }
+
+    /* Each direct child (the 3 columns) stretches to the tallest one */
+    .sf-main-row > [class*="col-"] {
+        width: auto;
+        max-width: none;
+        float: none;
+        align-self: stretch;
+
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    /* Left and right columns contain multiple .sf-section blocks.
+       Let them distribute extra space so the column becomes full height. */
+    .sf-main-row > [class*="col-"] > .sf-section {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+    }
+
+    .sf-main-row > [class*="col-"] > .sf-section > .panel {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+    }
+
+    .sf-main-row > [class*="col-"] > .sf-section > .panel > .panel-body {
+        flex: 0 0 auto; /* don't artificially stretch body content */
+    }
+}
+
+/* Make left/middle/right columns match height (row is flex),
+   and allow inner sections/panels to stretch to fill the column height. */
+/* Do NOT stretch panels/sections to fill column height.
+   This was causing "extra space" inside Inputs/Results/Insights panels. */
+.sf-main-row > [class*="col-"] > .sf-section {
+    flex: 0 0 auto;
+    display: block;
+}
+
+.sf-main-row > [class*="col-"] > .sf-section > .panel {
+    flex: 0 0 auto;
+    display: block;
+}
+
+.sf-main-row > [class*="col-"] > .sf-section > .panel > .panel-body {
+    flex: 0 0 auto;
+}
+
+/* Insights: do not force extra spacer height (avoid unnecessary bottom whitespace) */
+.sf-insights-panel .panel-body {
+    display: block;
+}
+
+.sf-insights-spacer {
+    display: none;
+}
+
+/* Help tooltip icon */
+.sf-help {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 1px solid rgba(241, 194, 50, 0.7);
+    background: #fff;
+    color: var(--sf-dark-3);
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    box-sizing: border-box;
+    padding-top: 1px;
+    cursor: help;
+    user-select: none;
+}
+.sf-help:hover {
+    background: rgba(241, 194, 50, 0.15);
+    border-color: var(--sf-accent);
+}
+
+
+@media (min-width: 992px) {
+    .sf-analysis-panel .sf-canvas-wrap {
+        min-height: 300px;
+    }
+}
+
 .sf-metric {
-    background: #f7f9fb;
-    border: 1px solid #e4e8ef;
+    background: var(--sf-card);
+    border: 1px solid var(--sf-border);
     padding: 12px 14px;
-    border-radius: 4px;
+    border-radius: 6px;
+    box-shadow: var(--sf-shadow);
 }
 
 .sf-metric-label {
-    font-size: 12px;
+    font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    color: #667084;
+    color: var(--sf-muted);
     margin-bottom: 6px;
     font-weight: 600;
 }
@@ -193,17 +697,17 @@ body {
 .sf-metric-value {
     font-size: 20px;
     font-weight: 600;
-    color: #2f3b52;
+    color: var(--sf-dark);
 }
 
 .sf-metric-sub {
     font-size: 12px;
-    color: #777;
+    color: var(--sf-muted);
     margin-top: 4px;
 }
 
 #resultsPanel {
-    background-color: #f9f9f9;
+    background-color: #f9fafc;
     position: relative;
     min-height: 140px;
     padding-bottom: 36px;
@@ -224,14 +728,26 @@ body {
 }
 
 canvas#sweaterCanvas {
-    background-color: #ffffff;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    background-color: transparent;
+    box-shadow: none;
+}
+
+/* Improve spacing for tab content to avoid cramped layout */
+.tab-content {
+    padding-bottom: 6px;
+}
+
+/* Reduce table header wrapping in recommendation/experiment tables */
+.table th,
+.table td {
+    white-space: nowrap;
 }
 
 /* Polish */
 .navbar-inverse {
-    background-color: #222;
-    border-color: #080808;
+    background-color: var(--sf-dark);
+    border-color: #14171c;
+    box-shadow: 0 4px 12px rgba(16, 18, 21, 0.25);
 }
 
 .navbar {
@@ -242,6 +758,7 @@ canvas#sweaterCanvas {
     font-weight: 600;
     letter-spacing: 0.3px;
     padding: 18px 15px;
+    color: var(--sf-accent);
 }
 
 .navbar-nav > li > a {
@@ -259,10 +776,180 @@ canvas#sweaterCanvas {
     color: #ffffff;
 }
 
-body {
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+.navbar-inverse .navbar-nav > .active > a,
+.navbar-inverse .navbar-nav > .active > a:hover,
+.navbar-inverse .navbar-nav > .active > a:focus {
+    background-color: var(--sf-dark-3);
+    color: var(--sf-accent);
 }
 
 h2 {
-    color: #333;
+    color: var(--sf-dark);
+}
+
+.sf-page-header {
+    margin-top: 12px;
+}
+
+.sf-page-header h2 {
+    margin-top: 0;
+    margin-bottom: 6px;
+}
+
+.sf-page-header small {
+    display: block;
+    margin-top: 4px;
+    color: var(--sf-muted);
+}
+
+.page-header {
+    border-bottom: 1px solid var(--sf-border);
+}
+
+.jumbotron {
+    background: var(--sf-card);
+    border: 1px solid var(--sf-border);
+    box-shadow: var(--sf-shadow);
+    border-radius: 8px;
+}
+
+.panel {
+    border-radius: 6px;
+    border-color: var(--sf-border);
+    box-shadow: var(--sf-shadow);
+}
+
+.panel-heading {
+    background: var(--sf-dark-2);
+    color: var(--sf-accent);
+    border-color: var(--sf-dark-2);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    font-size: 11px;
+}
+
+.panel-default > .panel-heading,
+.panel-info > .panel-heading,
+.panel-warning > .panel-heading {
+    background: var(--sf-dark-2);
+    color: var(--sf-accent);
+    border-color: var(--sf-dark-2);
+}
+
+.panel-body {
+    background: var(--sf-card);
+}
+
+.form-control {
+    border-radius: 6px;
+    border-color: var(--sf-border);
+    box-shadow: none;
+}
+
+.form-control:focus {
+    border-color: var(--sf-accent);
+    box-shadow: 0 0 0 2px rgba(241, 194, 50, 0.2);
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    background: var(--sf-accent);
+}
+
+input[type="range"]::-moz-range-thumb {
+    background: var(--sf-accent);
+    border: none;
+}
+
+.alert-info,
+.alert-success,
+.alert-danger {
+    border-radius: 6px;
+    border-color: var(--sf-border);
+}
+
+.alert-info {
+    background: #eef2f8;
+    color: var(--sf-dark);
+}
+
+.alert-success {
+    background: #e6f4ea;
+    color: #1e6b2d;
+}
+
+.alert-danger {
+    background: #fae7e7;
+    color: #8f1d1d;
+}
+
+.table > thead > tr > th {
+    background: #f0f2f7;
+    color: var(--sf-dark-3);
+    font-weight: 600;
+}
+
+.table > tbody > tr > td {
+    background: #fff;
+}
+
+.panel-info {
+    border-color: var(--sf-border);
+}
+
+.panel-info > .panel-heading {
+    background: var(--sf-dark-2);
+    color: var(--sf-accent);
+}
+
+.btn-primary {
+    background-color: var(--sf-accent);
+    border-color: var(--sf-accent);
+    color: var(--sf-dark);
+    font-weight: 600;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+    background-color: var(--sf-accent-strong);
+    border-color: var(--sf-accent-strong);
+    color: var(--sf-dark);
+}
+
+.btn-success {
+    background-color: var(--sf-accent);
+    border-color: var(--sf-accent);
+    color: var(--sf-dark);
+    font-weight: 600;
+}
+
+.btn-success:hover,
+.btn-success:focus {
+    background-color: var(--sf-accent-strong);
+    border-color: var(--sf-accent-strong);
+    color: var(--sf-dark);
+}
+
+.btn-default {
+    background-color: #f5f6fa;
+    border-color: var(--sf-border);
+    color: var(--sf-dark);
+    font-weight: 600;
+}
+
+.btn-default:hover,
+.btn-default:focus {
+    background-color: #e9ecf3;
+    border-color: var(--sf-border);
+}
+
+.btn {
+    border-radius: 6px;
+    letter-spacing: 0.2px;
+}
+
+.well {
+    background: var(--sf-card);
+    border: 1px solid var(--sf-border);
+    border-radius: 8px;
+    box-shadow: var(--sf-shadow);
 }
