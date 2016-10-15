@@ -16,6 +16,10 @@
     Tip: hover any chart to see exact values. Legends are shown beneath the charts for readability.
 </p>
 
+<p class="text-muted sf-analysis-intro">
+    Note: Efficiency drops as worker count increases because overhead and contention grow faster than useful parallel work.
+</p>
+
 <div class="panel panel-default sf-analysis-summary">
     <div class="panel-heading">Performance summary</div>
     <div class="panel-body">
@@ -55,7 +59,7 @@
         <div class="panel panel-warning sf-analysis-panel">
             <div class="panel-heading">
                 Speedup vs. number of workers
-                <span class="sf-help" data-toggle="tooltip" data-placement="left" title="Observed speedup relative to a single worker. Linear scaling would be a straight line from the origin.">
+                <span class="sf-help" data-toggle="tooltip" data-placement="left" title="Observed speedup relative to a single worker. The curve flattens when overhead and contention limit scaling.">
                     <img src="~/img/help-icon.svg" alt="Help" class="sf-help-icon" />
                 </span>
             </div>
@@ -63,7 +67,7 @@
                 <div class="sf-canvas-wrap">
                     <canvas id="perfSpeedupChart" height="220"></canvas>
                 </div>
-                <p class="help-block">Measured speedup as the number of workers increases.</p>
+                <p class="help-block">Measured speedup vs. workers. Linear scaling would be a straight line; flattening implies overhead.</p>
             </div>
         </div>
     </div>
@@ -71,7 +75,7 @@
         <div class="panel panel-warning sf-analysis-panel">
             <div class="panel-heading">
                 Efficiency vs. workers
-                <span class="sf-help" data-toggle="tooltip" data-placement="left" title="Efficiency = speedup / number of workers. Values closer to 1 indicate better parallel utilization.">
+                <span class="sf-help" data-toggle="tooltip" data-placement="left" title="Efficiency = speedup / workers. It falls when added workers contribute less due to overhead or memory contention.">
                     <img src="~/img/help-icon.svg" alt="Help" class="sf-help-icon" />
                 </span>
             </div>
@@ -79,7 +83,7 @@
                 <div class="sf-canvas-wrap">
                     <canvas id="perfEfficiencyChart" height="220"></canvas>
                 </div>
-                <p class="help-block">Efficiency is speedup divided by worker count.</p>
+                <p class="help-block">Efficiency falls with more workers when coordination and cache/memory limits dominate.</p>
             </div>
         </div>
     </div>
@@ -90,7 +94,7 @@
         <div class="panel panel-warning sf-analysis-panel">
             <div class="panel-heading">
                 Scaling time (seconds)
-                <span class="sf-help" data-toggle="tooltip" data-placement="left" title="Absolute runtime for each worker count. Lower is better; compare with the speedup chart for context.">
+                <span class="sf-help" data-toggle="tooltip" data-placement="left" title="Absolute runtime per worker count. Improvements taper off once overhead outweighs extra parallelism.">
                     <img src="~/img/help-icon.svg" alt="Help" class="sf-help-icon" />
                 </span>
             </div>
@@ -98,7 +102,7 @@
                 <div class="sf-canvas-wrap">
                     <canvas id="perfScalingChart" height="220"></canvas>
                 </div>
-                <p class="help-block">Absolute runtime in seconds for each worker count.</p>
+                <p class="help-block">Absolute runtime (s) per worker count; diminishing returns show up as a shallow slope.</p>
             </div>
         </div>
     </div>
@@ -106,7 +110,7 @@
         <div class="panel panel-warning sf-analysis-panel">
             <div class="panel-heading">
                 Parallel overhead estimate
-                <span class="sf-help" data-toggle="tooltip" data-placement="left" title="Estimated overhead beyond ideal linear scaling (coordination, scheduling, IO). Lower is better.">
+                <span class="sf-help" data-toggle="tooltip" data-placement="left" title="Estimated overhead beyond ideal linear scaling (coordination, scheduling, synchronization, IO). Lower is better.">
                     <img src="~/img/help-icon.svg" alt="Help" class="sf-help-icon" />
                 </span>
             </div>
@@ -114,7 +118,7 @@
                 <div class="sf-canvas-wrap">
                     <canvas id="perfOverheadChart" height="220"></canvas>
                 </div>
-                <p class="help-block">Estimated overhead beyond ideal linear scaling.</p>
+                <p class="help-block">Overhead grows with workers; this limits efficiency and speedup at higher counts.</p>
             </div>
         </div>
     </div>

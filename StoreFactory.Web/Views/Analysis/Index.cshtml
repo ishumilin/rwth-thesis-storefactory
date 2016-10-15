@@ -53,7 +53,7 @@
         <div class="panel panel-warning sf-analysis-panel">
             <div class="panel-heading">
                 Length factor vs. temperature
-                <span class="sf-help" data-toggle="tooltip" data-placement="left" title="Average length factor per temperature bin for each material. Values below 0.95 indicate higher shrink risk.">
+                <span class="sf-help" data-toggle="tooltip" data-placement="left" title="Average length factor per temperature bin (materials: Cotton, PES, Wool). Values below 0.95 indicate higher shrink risk.">
                     <img src="~/img/help-icon.svg" alt="Help" class="sf-help-icon" />
                 </span>
             </div>
@@ -69,7 +69,7 @@
         <div class="panel panel-warning sf-analysis-panel">
             <div class="panel-heading">
                 Length factor vs. dwell time
-                <span class="sf-help" data-toggle="tooltip" data-placement="left" title="Average length factor per dwell-time bin for each material. Longer dwell typically increases shrinkage.">
+                <span class="sf-help" data-toggle="tooltip" data-placement="left" title="Average length factor per dwell-time bin. Longer dwell typically increases shrinkage (lower factors).">
                     <img src="~/img/help-icon.svg" alt="Help" class="sf-help-icon" />
                 </span>
             </div>
@@ -88,7 +88,7 @@
         <div class="panel panel-warning sf-analysis-panel">
             <div class="panel-heading">
                 Material comparison (radar)
-                <span class="sf-help" data-toggle="tooltip" data-placement="left" title="Compares mean length/width/sleeve factors per material. Values closer to 1.00 indicate stable dimensions.">
+                <span class="sf-help" data-toggle="tooltip" data-placement="left" title="Mean length/width/sleeve factors per material. Values closer to 1.00 indicate stable dimensions; lower means more shrinkage.">
                     <img src="~/img/help-icon.svg" alt="Help" class="sf-help-icon" />
                 </span>
             </div>
@@ -104,7 +104,7 @@
         <div class="panel panel-warning sf-analysis-panel">
             <div class="panel-heading">
                 Shrinkage distribution (length)
-                <span class="sf-help" data-toggle="tooltip" data-placement="left" title="Histogram of length factors across all samples. The left tail highlights higher shrinkage cases.">
+                <span class="sf-help" data-toggle="tooltip" data-placement="left" title="Histogram of length factors across all 2,106 samples. The left tail highlights higher shrinkage cases.">
                     <img src="~/img/help-icon.svg" alt="Help" class="sf-help-icon" />
                 </span>
             </div>
@@ -123,7 +123,7 @@
         <div class="panel panel-warning sf-analysis-panel">
             <div class="panel-heading">
                 Stability heatmap (safe band %)
-                <span class="sf-help" data-toggle="tooltip" data-placement="left" title="Percentage of samples within the safe band (0.95–1.05) by temperature and dwell-time bins.">
+                <span class="sf-help" data-toggle="tooltip" data-placement="left" title="Percent of samples within the safe band (0.95–1.05) by temperature and dwell-time bins. Higher is better.">
                     <img src="~/img/help-icon.svg" alt="Help" class="sf-help-icon" />
                 </span>
             </div>
@@ -139,7 +139,7 @@
         <div class="panel panel-warning sf-analysis-panel">
             <div class="panel-heading">
                 Risk index (below 0.95)
-                <span class="sf-help" data-toggle="tooltip" data-placement="left" title="Share of samples per material with length factor below 0.95, indicating elevated shrink risk.">
+                <span class="sf-help" data-toggle="tooltip" data-placement="left" title="Share of samples per material with length factor below 0.95 (risk of excess shrink).">
                     <img src="~/img/help-icon.svg" alt="Help" class="sf-help-icon" />
                 </span>
             </div>
@@ -147,7 +147,7 @@
                 <div class="sf-canvas-wrap">
                     <canvas id="analysisRiskChart" height="220"></canvas>
                 </div>
-                <p class="help-block">Share of samples below 0.95 length factor for each material.</p>
+                <p class="help-block">Share of samples below 0.95 length factor for each material (risk indicator).</p>
             </div>
         </div>
     </div>
