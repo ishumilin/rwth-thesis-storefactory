@@ -61,21 +61,21 @@
     "version": "1.0"
   },
   "buffers": {
-    "Torso_buffer": {
+    "torso_buffer": {
       "type": "arraybuffer",
       "byteLength": 31384392,
-      "uri": "Torso_buffer.bin"
+      "uri": "torso_buffer.bin"
     }
   },
   "bufferViews": {
     "bufferView_0": {
-      "buffer": "Torso_buffer",
+      "buffer": "torso_buffer",
       "byteLength": 15694416,
       "byteOffset": 0,
       "target": 34962
     },
     "bufferView_1": {
-      "buffer": "Torso_buffer",
+      "buffer": "torso_buffer",
       "byteLength": 15689976,
       "byteOffset": 15694416,
       "target": 34963

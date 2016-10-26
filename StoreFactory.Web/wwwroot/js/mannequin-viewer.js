@@ -693,7 +693,7 @@ var mannequinViewer = (function () {
         }
 
         // Mannequin torso
-        appendAndCollect('Torso.gltf', function (addedMeshes) {
+        appendAndCollect('torso.gltf', function (addedMeshes) {
             torsoMeshes = addedMeshes.slice();
             torsoBaseScales = new Map();
             mannequinRoot = new BABYLON.Mesh('mannequinRoot', scene);
