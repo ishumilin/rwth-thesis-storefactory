@@ -1,0 +1,12 @@
+StoreFactory: Digital Lab for Textile Heat-Setting Simulation
+Copyright (c) 2016 RWTH Aachen University
+
+This product includes software developed as part of a master thesis project at RWTH Aachen University.
+
+Third-party components:
+- Babylon.js (used via vendored distribution under StoreFactory.Web/wwwroot/lib/babylon/)
+- Bootstrap, jQuery, Chart.js (used via vendored distributions under StoreFactory.Web/wwwroot/lib/)
+
+Third-party assets:
+- 3D model: "Torso Sculpt w arms" by Bjørnar Aarset — CC BY 4.0
+  https://sketchfab.com/3d-models/torso-sculpt-w-arms-ae14020046d64958afce52d935b93b7a
