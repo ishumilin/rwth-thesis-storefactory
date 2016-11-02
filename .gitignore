@@ -10,3 +10,5 @@ scripts/
 .venv/
 venv/
 assets/
+# Local Python 2.7 virtualenv (do not commit)
+.venv27/
