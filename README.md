@@ -32,7 +32,7 @@ The **StoreFactory Web Simulator** is a web-based **Digital Twin** platform desi
 The application serves as a "Digital Lab," allowing for the visualization of material deformations on 3D models and the optimization of process parameters to meet strict quality standards while maximizing throughput.
 
 ![Simulator Screenshot](docs/img/screenshot.png)
-*Figure: Interactive Web Simulator Dashboard*
+*Figure 1: Interactive Web Simulator Dashboard*
 
 ## Key Features
 
@@ -52,12 +52,12 @@ The application serves as a "Digital Lab," allowing for the visualization of mat
 *   **Statistical Insights:** Integrated Python pipeline processes raw measurement CSV data to generate histograms, risk indices, and stability grids.
 
     ![Shrinkage Distribution](docs/img/shrinkage_distribution.png)
-    *Figure 3: Distribution of Shrinkage Factors across Material Batches*
+    *Figure 2: Distribution of Shrinkage Factors across Material Batches*
 
 *   **High-Performance Computing:** Implements a **Parallel Computing Pipeline** (using Python `multiprocessing`) to benchmark data aggregation performance. It calculates speedup, efficiency, and overhead metrics across multiple CPU cores to demonstrate scalability.
 
     ![Parallel Speedup](docs/img/parallel_speedup.png)
-    *Figure 1: Parallel Speedup vs. Number of Workers*
+    *Figure 3: Parallel Speedup vs. Number of Workers*
 
 *   **Visualization:** Interactive charts and surface plots help identify stable process windows.
 
@@ -185,7 +185,7 @@ $$
 This approach allows for accurate predictions within the bounds of the measured data, falling back to nearest-neighbor or linear interpolation at the boundaries.
 
 ![Shrinkage vs Temperature](docs/img/shrinkage_vs_temp.png)
-*Figure 2: Empirical Shrinkage Behavior vs. Temperature*
+*Figure 4: Empirical Shrinkage Behavior vs. Temperature*
 
 ## Mathematical Appendix (Core Formulas)
 
@@ -343,7 +343,7 @@ Implementation reference: `build_histogram()`.
 For a threshold \(\tau\) and a material’s set of values:
 
 $$
-\text{risk}(\%) = 100\cdot \frac{\#\{x_i \mid x_i < \tau\}}{n}
+\text{risk}(\\%) = 100\cdot \frac{\\#\\{x_i \mid x_i < \tau\\}}{n}
 $$
 
 Implementation reference: `build_risk_index()`.
@@ -353,7 +353,7 @@ Implementation reference: `build_risk_index()`.
 Given temperature bins and dwell bins, each cell contains:
 
 $$
-\text{stable}(\%) = 100\cdot \frac{\#\{x_i \mid x_{\min}^{\text{safe}} \le x_i \le x_{\max}^{\text{safe}}\}}{\#\{x_i \text{ in cell}\}}
+\text{stable}(\\%) = 100\cdot \frac{\\#\\{x_i \mid x_{\min}^{\text{safe}} \le x_i \le x_{\max}^{\text{safe}}\\}}{\\#\\{x_i \text{ in cell}\\}}
 $$
 
 Implementation reference: `build_stability_grid()`.
